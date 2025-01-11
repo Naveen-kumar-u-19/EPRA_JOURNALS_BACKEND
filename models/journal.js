@@ -1,0 +1,63 @@
+const { DataTypes, Sequelize } = require('sequelize');
+
+module.exports = (sequelize) => {
+  const Journal = sequelize.define('Journal', {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    category: {
+      type: DataTypes.ENUM('ONLINE', 'PRINT', 'BOTH'),
+      allowNull: false
+    },
+    eissn: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    pissn: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    sjif: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    isi: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    short_code: {
+      type: DataTypes.STRING(50),
+      allowNull: false
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
+    }
+  }, {
+    tableName: 'journal',
+    underscored: true,
+  });
+
+  return Journal;
+};
