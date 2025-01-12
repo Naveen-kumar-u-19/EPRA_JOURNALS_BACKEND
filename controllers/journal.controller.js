@@ -6,12 +6,27 @@ const { sequelize } = require('../models');
  */
 const getAllJournals = async (req, res) => {
   try {
+    const { offset = 0, limit = 10 } = req.query;
+    //Get the overall count of journal list
+    const [countResult] = await sequelize.query(
+      'SELECT COUNT(*) FROM "journal" where is_deleted = false'
+    )
+    //Get the journal list
     const [getJournal] = await sequelize.query(
-      'SELECT * FROM "journal" WHERE "is_deleted"=false'
+      'SELECT * FROM "journal" WHERE "is_deleted"=false ORDER BY "id" DESC LIMIT :limit OFFSET :offset',
+      {
+        replacements: {
+          offset: parseInt(offset),
+          limit: parseInt(limit),
+        }
+      }
     );
     res.status(200).json({
       success: true,
-      result: getJournal,
+      result: {
+        count: Number(countResult?.[0]?.count),
+        rows: getJournal
+      },
       message: 'Get journals successfully.'
     });
   } catch (error) {

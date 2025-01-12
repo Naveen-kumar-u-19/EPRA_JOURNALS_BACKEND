@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 
 
 
-app.use('/v1', AdminRoute)
+app.use('/v1', AdminRoute); //Admin side api's
 app.use((req, res) => {
   res.send('Invalid route');
 })
