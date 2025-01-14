@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= page.pageTitle %></title>
+  <meta name="description" content="<%= page.metaDescription %>">
+  <meta name="keywords" content="<%= page.metaKeywords %>">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="<%= page.ogTitle || page.pageTitle %>">
+  <meta property="og:description" content="<%= page.ogDescription || page.metaDescription %>">
+  <meta property="og:image" content="<%= page.ogImage %>">
+  <meta property="og:url" content="<%= page.ogUrl %>">
+  <meta property="og:type" content="<%= page.ogType || 'website' %>">
+
+  <% if (page.headerScripts) { %>
+    <%= page.headerScripts %>
+  <% } %>
+</head>
+<body>
+  <main>
+    <%= page.content %>
+  </main>
+  <% if (page.footerScripts) { %>
+    <%= page.footerScripts %>
+  <% } %>
+</body>
+</html>
