@@ -7,20 +7,22 @@ const { sequelize } = require('../models');
 const getAllJournals = async (req, res) => {
   try {
     const { offset = 0, limit = 10 } = req.query;
-    //Get the overall count of journal list
+    // Get the overall count of journal list
     const [countResult] = await sequelize.query(
-      'SELECT COUNT(*) FROM "journal" where is_deleted = false'
-    )
-    //Get the journal list
+      'SELECT COUNT(*) as count FROM `journal` WHERE `is_deleted` = false'
+    );
+
+    // Get the journal list
     const [getJournal] = await sequelize.query(
-      'SELECT * FROM "journal" WHERE "is_deleted"=false ORDER BY "id" DESC LIMIT :limit OFFSET :offset',
+      'SELECT * FROM `journal` WHERE `is_deleted` = false ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
       {
         replacements: {
           offset: parseInt(offset),
           limit: parseInt(limit),
-        }
+        },
       }
     );
+
     res.status(200).json({
       success: true,
       result: {
@@ -38,34 +40,35 @@ const getAllJournals = async (req, res) => {
   }
 };
 
-
 /**
  * Function used to create journal
  */
 const createJournal = async (req, res) => {
   try {
+    if (req.body?.status) {
+      req.body.status = JSON.parse(req.body.status);
+    }
     const [createJournal] = await sequelize.query(
-      'INSERT INTO "journal" ("name","category","eissn","pissn","sjif","isi","status","short_code") values (:name,:category,:eissn, :pissn, :sjif, :isi, :status, :short_code)',
+      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :short_code)',
       {
         replacements: req.body,
-        type: sequelize.QueryTypes.INSERT
+        type: sequelize.QueryTypes.INSERT,
       }
-    )
+    );
     res.status(200).json({
       success: true,
       result: true,
-      message: 'Journal created successfully.'
+      message: 'Journal created successfully.',
     });
-
-  }
-  catch (error) {
+  } catch (error) {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to create journal.'
-    })
+      message: 'Failed to create journal.',
+    });
   }
-}
+};
+
 
 /**
  * Function used to update journal
@@ -75,26 +78,30 @@ const createJournal = async (req, res) => {
 const updateJournal = async (req, res) => {
   try {
     req.body['id'] = req.params?.id;
+    if (req.body?.status) {
+      req.body.status = JSON.parse(req.body.status);
+    }
     const [updateJournal] = await sequelize.query(
-      'UPDATE "journal" set "name" = :name, "category" = :category, "eissn"= :eissn, "pissn" = :pissn, "sjif"= :sjif, "isi"= :isi, "status" = :status, "short_code"= :short_code where "id" = :id',
+      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :short_code WHERE `id` = :id',
       {
-        replacements: req.body
+        replacements: req.body,
       }
     );
+
     res.status(200).json({
       success: true,
       result: true,
-      message: 'Journal updated successfully.'
+      message: 'Journal updated successfully.',
     });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to update journal.'
-    })
+      message: 'Failed to update journal.',
+    });
   }
-}
+};
+
 
 /**
  * Function used to delete journal
@@ -104,28 +111,28 @@ const updateJournal = async (req, res) => {
 const deleteJournal = async (req, res) => {
   try {
     let id = req.params?.id;
+
     const [deleteJournal] = await sequelize.query(
-      'UPDATE "journal" SET "is_deleted"= true WHERE "id"= :id',
+      'UPDATE `journal` SET `is_deleted` = true WHERE `id` = :id',
       {
-        replacements: { id }
+        replacements: { id },
       }
-    )
+    );
 
     res.status(200).json({
       success: true,
       result: true,
-      message: 'Journal deleted successfully.'
-    })
-
-  }
-  catch (error) {
+      message: 'Journal deleted successfully.',
+    });
+  } catch (error) {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to delete journal.'
-    })
+      message: 'Failed to delete journal.',
+    });
   }
-}
+};
+
 
 
 router.get('', getAllJournals);
