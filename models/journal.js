@@ -36,7 +36,7 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       defaultValue: true
     },
-    short_code: {
+    shortCode: {
       type: DataTypes.STRING(50),
       allowNull: false
     },
@@ -58,6 +58,10 @@ module.exports = (sequelize) => {
     tableName: 'journal',
     underscored: true,
   });
+
+  Journal.associate = (models) => {
+    Journal.hasMany(models.Paper, { foreignKey: 'journal_id', as: 'paper' });
+  };
 
   return Journal;
 };

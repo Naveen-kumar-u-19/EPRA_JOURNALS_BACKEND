@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { sequelize } = require('../models');
 
+
 /**
  * Function used to get all journal details for list page
  */
@@ -40,7 +41,7 @@ const getAllJournals = async (req, res) => {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to get journal'
+      message: 'Failed to get journals'
     });
   }
 };
@@ -54,7 +55,7 @@ const createJournal = async (req, res) => {
       req.body.status = JSON.parse(req.body.status);
     }
     const [createJournal] = await sequelize.query(
-      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :short_code)',
+      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :shortCode)',
       {
         replacements: req.body,
         type: sequelize.QueryTypes.INSERT,
@@ -86,8 +87,10 @@ const updateJournal = async (req, res) => {
     if (req.body?.status) {
       req.body.status = JSON.parse(req.body.status);
     }
+    req.body['updatedAt'] = new Date();
+
     const [updateJournal] = await sequelize.query(
-      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :short_code WHERE `id` = :id',
+      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :shortCode, `updated_at`= :updatedAt WHERE `id` = :id',
       {
         replacements: req.body,
       }
