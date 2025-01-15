@@ -6,19 +6,24 @@ const { sequelize } = require('../models');
  */
 const getAllJournals = async (req, res) => {
   try {
-    const { offset = 0, limit = 10 } = req.query;
+    const { offset = 0, limit = 10, searchText = '' } = req.query;
     // Get the overall count of journal list
     const [countResult] = await sequelize.query(
-      'SELECT COUNT(*) as count FROM `journal` WHERE `is_deleted` = false'
+      'SELECT COUNT(*) as count FROM `journal` WHERE `is_deleted` = false AND `name` LIKE :searchText', {
+      replacements: {
+        searchText: `%${searchText}%`
+      },
+    }
     );
 
     // Get the journal list
     const [getJournal] = await sequelize.query(
-      'SELECT * FROM `journal` WHERE `is_deleted` = false ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
+      'SELECT * FROM `journal` WHERE `is_deleted` = false AND `name` LIKE :searchText ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
       {
         replacements: {
           offset: parseInt(offset),
           limit: parseInt(limit),
+          searchText: `%${searchText}%`
         },
       }
     );
