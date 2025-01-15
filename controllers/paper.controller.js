@@ -9,7 +9,9 @@ const getPaperDetails = async (req, res) => {
     const { offset = 0, limit = 10, searchText = '' } = req.query;
     // Get the overall count of paper list
     const [countResult] = await sequelize.query(
-      'SELECT COUNT(*) as count FROM `paper` WHERE `is_deleted`= false AND `paper_title` LIKE :searchText', {
+      `SELECT COUNT(*) as count FROM paper 
+      INNER JOIN journal ON paper.journal_id = journal.id
+      WHERE paper.is_deleted= false and journal.is_deleted = false AND paper.paper_title LIKE :searchText`, {
       replacements: {
         searchText: `%${searchText}%`
       }
@@ -18,7 +20,9 @@ const getPaperDetails = async (req, res) => {
 
     // Get the paper list
     const [paperDetails] = await sequelize.query(
-      'SELECT * FROM `paper` WHERE `is_deleted`= false and `paper_title` LIKE :searchText ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
+      `SELECT paper.*,journal.name AS journal_name, journal.is_deleted as journal_is_deleted FROM paper 
+      INNER JOIN journal ON paper.journal_id = journal.id
+      WHERE paper.is_deleted= false and journal.is_deleted = false and paper.paper_title LIKE :searchText ORDER BY id DESC LIMIT :limit OFFSET :offset`,
       {
         replacements: {
           searchText: `%${searchText}%`,
@@ -53,13 +57,16 @@ const getOnePaperDetail = async (req, res) => {
   try {
     const { id } = req.params;
     const [getOnePaper] = await sequelize.query(
-      'SELECT * FROM `paper` WHERE `id` =:id AND `is_deleted` =false',
+      `SELECT paper.*,  journal.id AS journal_id, journal.name AS journal_name, journal.category AS journal_category, journal.status AS journal_status, journal.is_deleted as journal_is_deleted 
+      FROM paper INNER JOIN journal ON paper.journal_id = journal.id 
+      WHERE paper.id = :id AND paper.is_deleted = false AND  journal.is_deleted = false`,
       {
         replacements: {
           id: id
         }
       }
     );
+    console.log(getOnePaper);
     if (getOnePaper?.length) {
       res.status(200).json({
         success: true,
@@ -71,7 +78,7 @@ const getOnePaperDetail = async (req, res) => {
       res.status(400).json({
         success: false,
         error: error.message || error,
-        message: 'Failed to get paper detail'
+        message: 'Invalid paper id'
       });
     }
   }
