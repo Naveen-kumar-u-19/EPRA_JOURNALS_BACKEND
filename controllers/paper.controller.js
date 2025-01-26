@@ -45,7 +45,7 @@ const getPaperDetails = async (req, res) => {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to get papers'
+      message: 'Failed to get papers.'
     });
   }
 }
@@ -66,7 +66,6 @@ const getOnePaperDetail = async (req, res) => {
         }
       }
     );
-    console.log(getOnePaper);
     if (getOnePaper?.length) {
       res.status(200).json({
         success: true,
@@ -78,7 +77,7 @@ const getOnePaperDetail = async (req, res) => {
       res.status(400).json({
         success: false,
         error: error.message || error,
-        message: 'Invalid paper id'
+        message: 'Invalid paper id.'
       });
     }
   }
@@ -86,12 +85,75 @@ const getOnePaperDetail = async (req, res) => {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to get paper detail'
+      message: 'Failed to get paper detail.'
     });
+  }
+}
+
+/**
+ * Function used to update paper detail
+ * @param {*} req 
+ * @param {*} res 
+ */
+const updatePaperDetail = async (req, res) => {
+  try {
+    req.body['id'] = req.params?.id;
+    req.body['updateaAt'] = new Date();
+
+    const [updateJournal] = await sequelize.query(
+      'UPDATE `paper` SET `paper_title` =:paper_title, `author_name` =:author_name, `mobile` =:mobile,`email` =:email,`designation`=:designation,`dept`=:dept,`college_university`=:college_university,`institution_place`=:institution_place, `state`=:state,`country`=:country,`local_ip`=:local_ip,`status`=:status where `id` =:id', {
+      replacements: req.body
+    }
+    )
+    res.status(200).json({
+      success: true,
+      result: updateJournal,
+      message: 'Paper updated sucessfully.'
+    })
+
+  }
+  catch (err) {
+    res.status(400).json({
+      success: false,
+      error: err.message | err,
+      message: 'Failed to update paper.'
+    })
+  }
+}
+
+/**
+ * Function used to delete paper detail
+ * @param {*} req 
+ * @param {*} res 
+ */
+const deletePaperDetail = async (req, res) => {
+  try {
+    const id = req.params?.id;
+
+    const [deletePaper] = await (sequelize.query(
+      'UPDATE `paper` SET `is_deleted`= true WHERE `id` =:id', {
+      replacements: {
+        id: id
+      }
+    }
+    ))
+    res.status(200).json({
+      success: true,
+      result: deletePaper,
+      message: 'Paper deleted successfully.'
+    })
+  }
+  catch (err) {
+    res.status(400).json({
+      success: false,
+      error: err.message | err,
+      message: 'Failed to delete paper.'
+    })
   }
 }
 
 router.get('', getPaperDetails);
 router.get('/:id', getOnePaperDetail);
-
+router.put('/:id', updatePaperDetail);
+router.delete('/:id', deletePaperDetail);
 module.exports = router;

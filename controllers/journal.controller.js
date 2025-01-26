@@ -118,7 +118,7 @@ const updateJournal = async (req, res) => {
  */
 const deleteJournal = async (req, res) => {
   try {
-    let id = req.params?.id;
+    const id = req.params?.id;
 
     const [deleteJournal] = await sequelize.query(
       'UPDATE `journal` SET `is_deleted` = true WHERE `id` = :id',
