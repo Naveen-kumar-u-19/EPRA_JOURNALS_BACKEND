@@ -6,14 +6,21 @@ const { sequelize } = require('../models');
  */
 const getPaperDetails = async (req, res) => {
   try {
-    const { offset = 0, limit = 10, searchText = '' } = req.query;
+    const { offset = 0, limit, searchText = '' } = req.query;
+    let status = ""; //Used to filter by status
+    if (req.query?.filterDetail) {
+      const filterDetail = JSON.parse(req.query?.filterDetail);
+      status = filterDetail.status ?? '';
+    }
+
     // Get the overall count of paper list
     const [countResult] = await sequelize.query(
       `SELECT COUNT(*) as count FROM paper 
       INNER JOIN journal ON paper.journal_id = journal.id
-      WHERE paper.is_deleted= false and journal.is_deleted = false AND paper.paper_title LIKE :searchText`, {
+      WHERE paper.is_deleted= false and journal.is_deleted = false AND (:status = '' OR paper.status = :status) AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText)`, {
       replacements: {
-        searchText: `%${searchText}%`
+        searchText: `%${searchText}%`,
+        status: status
       }
     }
     );
@@ -22,9 +29,10 @@ const getPaperDetails = async (req, res) => {
     const [paperDetails] = await sequelize.query(
       `SELECT paper.*,journal.name AS journal_name, journal.is_deleted as journal_is_deleted FROM paper 
       INNER JOIN journal ON paper.journal_id = journal.id
-      WHERE paper.is_deleted= false and journal.is_deleted = false and paper.paper_title LIKE :searchText ORDER BY id DESC LIMIT :limit OFFSET :offset`,
+      WHERE paper.is_deleted= false AND journal.is_deleted = false AND (:status = '' OR paper.status = :status) AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY id DESC LIMIT :limit OFFSET :offset`,
       {
         replacements: {
+          status: status,
           searchText: `%${searchText}%`,
           limit: parseInt(limit),
           offset: parseInt(offset)
@@ -92,8 +100,6 @@ const getOnePaperDetail = async (req, res) => {
 
 /**
  * Function used to update paper detail
- * @param {*} req 
- * @param {*} res 
  */
 const updatePaperDetail = async (req, res) => {
   try {
@@ -123,8 +129,6 @@ const updatePaperDetail = async (req, res) => {
 
 /**
  * Function used to delete paper detail
- * @param {*} req 
- * @param {*} res 
  */
 const deletePaperDetail = async (req, res) => {
   try {
@@ -152,7 +156,43 @@ const deletePaperDetail = async (req, res) => {
   }
 }
 
+/**
+ * Function used to get paper detail by status
+ */
+const getPaperForNewArticle = async (req, res) => {
+  try {
+    const status = req.query?.status;
+
+    // Get the paper list
+    const [paperDetails] = await sequelize.query(
+      `SELECT paper.id, paper.paper_index, journal.id as journal_id, journal.name as journal_name FROM paper 
+        INNER JOIN journal ON paper.journal_id = journal.id
+        WHERE paper.is_deleted= false AND journal.is_deleted = false AND (:status = '' OR paper.status = :status) AND paper.id NOT IN (SELECT DISTINCT paper_id FROM article) ORDER BY id DESC`,
+      {
+        replacements: {
+          status: status,
+        }
+      }
+    )
+
+    res.status(200).json({
+      success: true,
+      paperDetails: paperDetails,
+      message: 'Get Papers successfully.'
+    })
+
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to get papers.'
+    });
+  }
+}
+
 router.get('', getPaperDetails);
+router.get('/readyforarticle', getPaperForNewArticle);
 router.get('/:id', getOnePaperDetail);
 router.put('/:id', updatePaperDetail);
 router.delete('/:id', deletePaperDetail);
