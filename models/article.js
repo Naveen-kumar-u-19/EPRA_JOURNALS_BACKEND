@@ -28,6 +28,10 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    docUrl: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
     abstract: {
       type: DataTypes.STRING,
       allowNull: true

@@ -1,26 +1,41 @@
 const router = require('express').Router();
 const { sequelize } = require('../models');
-
+const { uploadFile, upload } = require('./s3.controller');
 /**
  * Function used tp create article
  */
 const createArticle = async (req, res) => {
   try {
+    const uploadDetail = await uploadFile(req); //Upload Doc
     if (req.body?.published_on) {
       req.body['published_on'] = new Date(req.body['published_on']);
     }
-    const [createArticle] = await sequelize.query(
-      'INSERT INTO `article` (`doi`, `google_search_link`, `google_scholar_link`, `published_on`, `order`, `abstract`, `keywords`,`paper_id`) VALUES (:doi, :google_search_link, :google_scholar_link, :published_on, :order, :abstract, :keywords, :paper_id)',
-      {
-        replacements: req.body,
-        type: sequelize.QueryTypes.INSERT,
-      }
-    );
-    res.status(200).json({
-      success: true,
-      result: true,
-      message: 'Article created successfully.',
-    });
+    if (!Number(req.body?.order)) {
+      req.body['order'] = null;
+    }
+    if (uploadDetail.key) {
+      req.body['doc_url'] = uploadDetail?.key;
+      console.log(req.body);
+      const [createArticle] = await sequelize.query(
+        'INSERT INTO `article` (`doi`, `google_search_link`, `google_scholar_link`, `published_on`, `order`, `abstract`, `keywords`,`paper_id`, `doc_url`) VALUES (:doi, :google_search_link, :google_scholar_link, :published_on, :order, :abstract, :keywords, :paper_id, :doc_url)',
+        {
+          replacements: req.body,
+          type: sequelize.QueryTypes.INSERT,
+        }
+      );
+      res.status(200).json({
+        success: true,
+        result: true,
+        message: 'Article created successfully.',
+      });
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        error: 'Failed to upload.',
+        message: 'Failed to upload.',
+      });
+    }
   }
   catch (error) {
     res.status(400).json({
@@ -52,7 +67,7 @@ const getArtcleDetail = async (req, res) => {
 
     // Get the overall count of article list with paper detail
     const [articleDetails] = await sequelize.query(
-      `SELECT article.id as article_id, article.doi, article.google_search_link, article.google_scholar_link, article.order, article.published_on, article.abstract, article.keywords, paper.* FROM article 
+      `SELECT article.id as article_id, article.doi, article.doc_url, article.google_search_link, article.google_scholar_link, article.order, article.published_on, article.abstract, article.keywords, paper.* FROM article 
           INNER JOIN paper ON article.paper_id = paper.id
           WHERE article.is_deleted= false and paper.is_deleted = false AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY article_id DESC LIMIT :limit OFFSET :offset`, {
       replacements: {
@@ -83,5 +98,5 @@ const getArtcleDetail = async (req, res) => {
 }
 
 router.get('', getArtcleDetail);
-router.post('', createArticle);
+router.post('', upload.single("file"), createArticle);
 module.exports = router;
