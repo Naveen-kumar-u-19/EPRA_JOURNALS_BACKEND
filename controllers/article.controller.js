@@ -6,16 +6,17 @@ const { uploadFile, upload } = require('./s3.controller');
  */
 const createArticle = async (req, res) => {
   try {
-    const uploadDetail = await uploadFile(req); //Upload Doc
     if (req.body?.published_on) {
       req.body['published_on'] = new Date(req.body['published_on']);
     }
     if (!Number(req.body?.order)) {
       req.body['order'] = null;
     }
+    const uploadDetail = await uploadFile(req); //Upload Doc
     if (uploadDetail.key) {
       req.body['doc_url'] = uploadDetail?.key;
       console.log(req.body);
+      //Create article
       const [createArticle] = await sequelize.query(
         'INSERT INTO `article` (`doi`, `google_search_link`, `google_scholar_link`, `published_on`, `order`, `abstract`, `keywords`,`paper_id`, `doc_url`) VALUES (:doi, :google_search_link, :google_scholar_link, :published_on, :order, :abstract, :keywords, :paper_id, :doc_url)',
         {
@@ -23,6 +24,12 @@ const createArticle = async (req, res) => {
           type: sequelize.QueryTypes.INSERT,
         }
       );
+      //Update the paper table
+      const [updatePaper] = await sequelize.query(
+        'UPDATE `paper` SET `is_article_Created` = 1,`status`="PUB" where `id` =:paper_id', {
+        replacements: req.body
+      })
+
       res.status(200).json({
         success: true,
         result: true,
@@ -97,6 +104,47 @@ const getArtcleDetail = async (req, res) => {
   }
 }
 
+/**
+ * Function used to delete article
+ */
+const deleteArticle = async (req, res) => {
+  try {
+    const id = req.params?.id;
+    const paperId = req.params?.paper_id;
+    if (id) {
+      //Delete article
+      const [deletePaper] = await (sequelize.query(
+        'UPDATE `article` SET `is_deleted`= true WHERE `id` =:id', {
+        replacements: {
+          id: id
+        }
+      }
+      ));
+      //Update the paper table
+      const [updatePaper] = await sequelize.query(
+        'UPDATE `paper` SET `is_article_Created` = false where `id` =:paper_id', {
+        replacements: {
+          paper_id: paperId
+        }
+      })
+      res.status(200).json({
+        success: true,
+        result: true,
+        message: 'Article deleted successfully.',
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to delete article.',
+    });
+  }
+
+}
+
 router.get('', getArtcleDetail);
 router.post('', upload.single("file"), createArticle);
+router.delete('/:id/paper/:paper_id', deleteArticle);
 module.exports = router;

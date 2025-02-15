@@ -117,6 +117,10 @@ module.exports = (sequelize) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    isArticleCreated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.fn('NOW'),

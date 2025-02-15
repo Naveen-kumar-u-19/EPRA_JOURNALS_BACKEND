@@ -167,7 +167,7 @@ const getPaperForNewArticle = async (req, res) => {
     const [paperDetails] = await sequelize.query(
       `SELECT paper.id, paper.paper_index, journal.id as journal_id, journal.name as journal_name FROM paper 
         INNER JOIN journal ON paper.journal_id = journal.id
-        WHERE paper.is_deleted= false AND journal.is_deleted = false AND (:status = '' OR paper.status = :status) AND paper.id NOT IN (SELECT DISTINCT paper_id FROM article) ORDER BY id DESC`,
+        WHERE paper.is_deleted= false AND journal.is_deleted = false AND paper.is_article_Created=0 AND (:status = '' OR paper.status = :status) ORDER BY id DESC`,
       {
         replacements: {
           status: status,
