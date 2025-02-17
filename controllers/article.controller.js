@@ -54,6 +54,46 @@ const createArticle = async (req, res) => {
 }
 
 /**
+ * Function used to update article
+ */
+const updateArticle = async (req, res) => {
+  try {
+    if (req.body?.published_on) {
+      req.body['published_on'] = new Date(req.body['published_on']);
+    }
+    if (!Number(req.body?.order)) {
+      req.body['order'] = null;
+    }
+    if (req.file?.originalname) {
+      const uploadDetail = await uploadFile(req); //Upload Doc
+      if (uploadDetail.key) {
+        req.body['doc_url'] = uploadDetail?.key;
+      }
+    }
+    //Update article
+    const [updateArticle] = await sequelize.query(
+      'UPDATE `article` SET `doi` = :doi, `google_search_link` = :google_search_link, `google_scholar_link` = :google_scholar_link, `published_on` = :published_on, `order` = :order, `abstract` = :abstract, `keywords` = :keywords, `doc_url` = :doc_url WHERE `id` = :id',
+      { replacements: { id: req.params.id, ...req.body }, type: sequelize.QueryTypes.UPDATE })
+
+    res.status(200).json({
+      success: true,
+      result: true,
+      result: updateArticle,
+      message: 'Article updated successfully.',
+    });
+
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to update article.',
+    });
+  }
+
+}
+
+/**
  * Function used to get article detail for list
  */
 const getArtcleDetail = async (req, res) => {
@@ -122,7 +162,7 @@ const deleteArticle = async (req, res) => {
       ));
       //Update the paper table
       const [updatePaper] = await sequelize.query(
-        'UPDATE `paper` SET `is_article_Created` = false where `id` =:paper_id', {
+        'UPDATE `paper` SET `is_article_Created` = 0, `status`="ACC"  where `id` =:paper_id', {
         replacements: {
           paper_id: paperId
         }
@@ -141,10 +181,10 @@ const deleteArticle = async (req, res) => {
       message: 'Failed to delete article.',
     });
   }
-
 }
 
 router.get('', getArtcleDetail);
 router.post('', upload.single("file"), createArticle);
+router.put('/:id', upload.single("file"), updateArticle);
 router.delete('/:id/paper/:paper_id', deleteArticle);
 module.exports = router;

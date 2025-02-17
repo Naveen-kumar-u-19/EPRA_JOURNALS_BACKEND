@@ -13,7 +13,7 @@ const uploadFile = async (req) => {
   }
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: req.file.originalname,
+    Key: `${Date.now()}-${req.file.originalname}`,
     Body: req.file.buffer,
     ContentType: req.file.mimetype,
   };

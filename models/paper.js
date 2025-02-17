@@ -65,11 +65,11 @@ module.exports = (sequelize) => {
       allowNull: true
     },
     volume: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     issue: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     status: {
