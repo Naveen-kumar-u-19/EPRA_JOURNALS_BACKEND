@@ -45,7 +45,7 @@ const getPaperDetails = async (req, res) => {
         count: Number(countResult?.[0]?.count),
         rows: paperDetails
       },
-      message: 'Get Papers successfully.'
+      message: 'Get papers successfully.'
     })
 
   }
@@ -178,7 +178,7 @@ const getPaperForNewArticle = async (req, res) => {
     res.status(200).json({
       success: true,
       paperDetails: paperDetails,
-      message: 'Get Papers successfully.'
+      message: 'Get papers successfully.'
     })
 
   }
@@ -191,8 +191,48 @@ const getPaperForNewArticle = async (req, res) => {
   }
 }
 
+/**
+ * Function used to get all paper status count
+ */
+const getAllPaperStatusCount = async (req, res) => {
+  const statusArr = ['PER', 'UNR', 'FOR', 'ACC', 'PUB', 'REV', 'CAN', 'REJ'];
+  const result = {};
+
+  try {
+    await Promise.all(
+      statusArr.map(async (status) => {
+        const [countResult] = await sequelize.query(
+          `SELECT COUNT(*) as count FROM paper 
+          INNER JOIN journal ON paper.journal_id = journal.id
+          WHERE paper.is_deleted = false AND journal.is_deleted = false AND paper.status = :status`,
+          {
+            replacements: { status: status },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        result[status] = countResult?.count || 0;
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      result: result,
+      message: 'Get papers status successfully.',
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to get papers status detail.',
+    });
+  }
+};
+
+
 router.get('', getPaperDetails);
-router.get('/readyforarticle', getPaperForNewArticle);
+router.get('/readyForArticle', getPaperForNewArticle);
+router.get('/statusCount', getAllPaperStatusCount);
 router.get('/:id', getOnePaperDetail);
 router.put('/:id', updatePaperDetail);
 router.delete('/:id', deletePaperDetail);
