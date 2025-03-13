@@ -204,7 +204,7 @@ const getAllPaperStatusCount = async (req, res) => {
         const [countResult] = await sequelize.query(
           `SELECT COUNT(*) as count FROM paper 
           INNER JOIN journal ON paper.journal_id = journal.id
-          WHERE paper.is_deleted = false AND journal.is_deleted = false AND paper.status = :status`,
+          WHERE paper.is_deleted = false AND journal.is_deleted = false AND paper.status = :status ORDER BY paper.id DESC`,
           {
             replacements: { status: status },
             type: sequelize.QueryTypes.SELECT,
