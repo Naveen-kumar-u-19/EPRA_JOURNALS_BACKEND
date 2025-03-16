@@ -4,6 +4,7 @@ const MailController = require('../controllers/mail.controller');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
+const passport = require('passport');
 
 const JWT_TOKEN = process.env.SECRET;
 
@@ -57,6 +58,8 @@ const registerAdmin = async (req, res) => {
 
 }
 
+
+
 /**
  * Function used to notify registered admin detail to admin
  */
@@ -81,11 +84,81 @@ const notifyRegisterToAdmin = async (detail) => {
   }
 }
 
+/**
+ * Function used to sned forgot password mail 
+ */
+const sendForgotPasswordMail = async (req, res) => {
+  try {
+    const email = req.body?.email;
+    const [getAdminDetail] = await sequelize.query(
+      'SELECT * FROM `admin` WHERE `mail` = :mail and `is_deleted` = false and `is_approved` = true', {
+      replacements: {
+        mail: email
+      }
+    });
+    if (getAdminDetail?.length) {
+      const detail = getAdminDetail[0];
+      const token = jwt.sign({ email: detail.mail }, JWT_TOKEN);
+      const [updateJournal] = await sequelize.query(
+        'UPDATE `admin` SET `reset_token` = :token WHERE `id` = :id',
+        {
+          replacements: {
+            token: token,
+            id: detail.id
+          }
+        }
+      );
+      if (updateJournal) {
+        detail['resetToken'] = token;
+        await notifyResetPassword(detail);
+
+        res.status(200).json({
+          success: true,
+          result: updateJournal,
+          message: 'Mail sent successfully.',
+        });
+      }
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        message: 'Email does not exist.',
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to send mail.',
+    });
+  }
+}
+
+/**
+ * Function used to notify reset password
+ */
+const notifyResetPassword = async (detail) => {
+  const frontUrl = process.env.FRONT_END_URL;
+  const template = `<div style="text-align: center;">
+  <h1 style="text-decoration: underline">Reset Password</h1>
+  <p>Name: ${detail.name}</p>
+  <p>Click the below link to reset password.</p>
+  <a href="${frontUrl}/generate-password/${detail.resetToken}">Click me</a>
+  </div>`
+  const sendMail = await MailController.sendMail(detail.mail, 'Request for Password Reset', 'Details', template);
+  if (sendMail.success) {
+    return { success: true };
+  }
+  else {
+    return { success: false };
+  }
+}
 
 /**
  * Function used to get registered admin detail using token
  */
-getRegisterAdminDetail = async (req, res) => {
+const getRegisterAdminDetail = async (req, res) => {
   try {
     const reset_token = req.query?.token;
     const decoded = jwt.verify(reset_token, JWT_TOKEN);
@@ -130,7 +203,7 @@ getRegisterAdminDetail = async (req, res) => {
 /**
  * Function used to generate admin password
  */
-generatePassword = async (req, res) => {
+const generatePassword = async (req, res) => {
   try {
     const { reset_token, isAdmin, password } = req.body;
     const decoded = jwt.verify(reset_token, JWT_TOKEN);
@@ -146,7 +219,7 @@ generatePassword = async (req, res) => {
         const encryptedPassword = await bcrypt.hash(password, 10);
         //Generate password
         const [updateJournal] = await sequelize.query(
-          'UPDATE `admin` SET `password` = :password, `reset_token` = NULL WHERE `mail` = :mail and `reset_token` = :reset_token and `is_deleted` = false',
+          'UPDATE `admin` SET `password` = :password, `reset_token` = NULL, `is_approved` = true WHERE `mail` = :mail and `reset_token` = :reset_token and `is_deleted` = false',
           {
             replacements: {
               password: encryptedPassword,
@@ -201,7 +274,6 @@ generatePassword = async (req, res) => {
  */
 const notifyPasswordToAdmin = async (detail) => {
   const frontUrl = process.env.FRONT_END_URL;
-  const adminMail = process.env.ADMIN_MAIL;
   const template = `<div style="text-align: center; ">
   <h1 style="text-decoration: underline">Congratulation from EPRA Journal</h1>
   <p>You are successsfully added as the admin. Use the below password to login into EPRA Journal.</p>
@@ -217,7 +289,160 @@ const notifyPasswordToAdmin = async (detail) => {
   }
 }
 
+/**
+ * Function used to signin admin
+ */
+const signIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (email && password) {
+      const [getAdminDetail] = await sequelize.query(
+        'SELECT * FROM `admin` WHERE `mail` = :mail and `is_deleted` = false and `is_approved` = true', {
+        replacements: {
+          mail: email
+        }
+      });
+      if (getAdminDetail?.length && getAdminDetail[0]?.password) {
+        const detail = getAdminDetail[0];
+        if (detail.password) {
+          const checkPassword = await bcrypt.compare(password, detail.password);
+          if (checkPassword) {
+            const token = jwt.sign(detail, JWT_TOKEN, { 'expiresIn': '5h' });
+            delete detail.password;
+            res.status(200).json({
+              success: true,
+              result: {
+                detail: detail,
+                token: token
+              },
+              message: 'User verified successfully.',
+            });
+          }
+          else {
+            res.status(400).json({
+              success: false,
+              message: 'Invalid credential.',
+            });
+          }
+        }
+      }
+      else {
+        res.status(400).json({
+          success: false,
+          message: 'Invalid credential.',
+        });
+      }
+
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to login.',
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to login.',
+    });
+  }
+}
+/**
+ * Function used to get admin detail based on token
+ */
+const getAdminBasedOnToken = async (req, res) => {
+  try {
+    const detail = req.user;
+    if (detail.id) {
+      const [getAdminDetail] = await sequelize.query(
+        'SELECT * FROM `admin` WHERE `id` = :id and `is_deleted` = false and `is_approved` = true', {
+        replacements: {
+          id: detail.id
+        }
+      });
+      if (getAdminDetail?.length) {
+        const adminDetail = getAdminDetail[0];
+        if (adminDetail.reset_token) {
+          delete adminDetail.reset_token;
+        }
+        res.status(200).json({
+          success: true,
+          result: {
+            detail: adminDetail,
+          },
+          message: 'User verified successfully.',
+        });
+      }
+      else {
+        res.status(400).json({
+          success: false,
+          message: 'Invalid user',
+        });
+      }
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid user',
+      });
+    }
+
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to get detail.',
+    });
+  }
+}
+
+/**
+ * Function used to update admin detail
+ */
+const updateAdminDetail = async (req, res) => {
+  try {
+    const detail = req.body;
+    const id = req.params?.id;
+    if (detail && id) {
+      detail['updatedAt'] = new Date();
+      detail['id'] = id;
+      const [updateAdmin] = await sequelize.query(
+        'UPDATE `admin` SET `name` = :name, `mobile` = :mobile, `gender` = :gender,`updated_at`= :updatedAt WHERE `id` = :id  and is_deleted = false and is_approved=true',
+        {
+          replacements: detail,
+        }
+      );
+
+      res.status(200).json({
+        success: true,
+        result: updateAdmin,
+        message: 'Journal updated successfully.',
+      });
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to udpate.',
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to udpate.',
+    });
+  }
+}
+
 router.get('/register', getRegisterAdminDetail);
 router.post('/register', registerAdmin);
-router.post('/password', generatePassword)
+router.post('/password', generatePassword);
+router.post('/signin', signIn);
+router.post('/forgotPassword', sendForgotPasswordMail);
+router.get('/token', passport.authenticate('jwt', { session: false }), getAdminBasedOnToken);
+router.put('/update/:id', passport.authenticate('jwt', { session: false }), updateAdminDetail);
 module.exports = router;

@@ -4,10 +4,12 @@ const cors = require('cors'); //cors package
 const { sequelize } = require('./models');
 const AdminRoute = require('./routes/api');
 const WebRoute = require('./routes/web');
-
+const passport = require('passport');
 require('dotenv').config();
 
 app.use(cors());
+app.use(passport.initialize());
+require('./middleware/passport');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
