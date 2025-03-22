@@ -141,11 +141,34 @@ const deleteJournal = async (req, res) => {
   }
 };
 
+/**
+ * Function used to get all journal for filter
+ */
+const getAllJournalForFilter = async (req, res) => {
+  try {
+    // Get the journal list
+    const [getJournal] = await sequelize.query('SELECT * FROM `journal` WHERE `is_deleted` = false ORDER BY `id` DESC');
+
+    res.status(200).json({
+      success: true,
+      result: getJournal,
+      message: 'Journal got successfully.',
+    });
+
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to get journal.',
+    });
+  }
+}
 
 
 router.get('', getAllJournals);
 router.post('/', createJournal);
 router.put('/:id', updateJournal);
 router.delete('/:id', deleteJournal);
-
+router.get('/filter', getAllJournalForFilter);
 module.exports = router;
