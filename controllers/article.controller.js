@@ -18,7 +18,7 @@ const createArticle = async (req, res) => {
       console.log(req.body);
       //Create article
       const [createArticle] = await sequelize.query(
-        'INSERT INTO `article` (`doi`, `google_search_link`, `google_scholar_link`, `published_on`, `order`, `abstract`, `keywords`,`paper_id`, `doc_url`) VALUES (:doi, :google_search_link, :google_scholar_link, :published_on, :order, :abstract, :keywords, :paper_id, :doc_url)',
+        'INSERT INTO `article` (`doi`, `google_search_link`, `google_scholar_link`, `published_on`, `order`, `abstract`, `keywords`,`paper_id`, `doc_url`,`issue_id`) VALUES (:doi, :google_search_link, :google_scholar_link, :published_on, :order, :abstract, :keywords, :paper_id, :doc_url,:issue_id)',
         {
           replacements: req.body,
           type: sequelize.QueryTypes.INSERT,
@@ -105,7 +105,8 @@ const getArtcleDetail = async (req, res) => {
     const [countResult] = await sequelize.query(
       `SELECT COUNT(*) as count FROM article 
           INNER JOIN paper ON article.paper_id = paper.id
-          WHERE article.is_deleted= false and paper.is_deleted = false AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText)`, {
+          INNER JOIN issue_period ON article.issue_id = issue_period.id
+          WHERE article.is_deleted= false AND paper.is_deleted = false AND issue_period.is_deleted = false AND  (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText)`, {
       replacements: {
         searchText: `%${searchText}%`,
       }
@@ -114,9 +115,10 @@ const getArtcleDetail = async (req, res) => {
 
     // Get the overall count of article list with paper detail
     const [articleDetails] = await sequelize.query(
-      `SELECT article.id as article_id, article.doi, article.doc_url, article.google_search_link, article.google_scholar_link, article.order, article.published_on, article.abstract, article.keywords, paper.* FROM article 
+      `SELECT article.id as article_id, article.doi, article.doc_url, article.google_search_link, article.google_scholar_link, article.order, article.published_on, article.abstract, article.keywords, paper.*, issue_period.id as issue_id, issue_period.month as issue_month, issue_period.year as issue_year FROM article 
           INNER JOIN paper ON article.paper_id = paper.id
-          WHERE article.is_deleted= false and paper.is_deleted = false AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY article_id DESC LIMIT :limit OFFSET :offset`, {
+          INNER JOIN issue_period ON article.issue_id = issue_period.id
+          WHERE article.is_deleted= false AND paper.is_deleted = false AND issue_period.is_deleted = false AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY article_id DESC LIMIT :limit OFFSET :offset`, {
       replacements: {
         searchText: `%${searchText}%`,
         limit: parseInt(limit),

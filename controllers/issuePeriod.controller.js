@@ -53,6 +53,17 @@ const createIssuePeriod = async (req, res) => {
     if (req.body?.status) {
       req.body.status = JSON.parse(req.body.status);
     }
+
+    const [updateIssue] = await sequelize.query(
+      `UPDATE issue_period SET is_latest = false WHERE journal_id = :journal_id and is_deleted = false`,
+      {
+        replacements: {
+          journal_id: parseInt(req.body?.journal_id)
+        },
+        type: sequelize.QueryTypes.UPDATE,
+      }
+    );
+
     const [createIssue] = await sequelize.query(
       'INSERT INTO `issue_period` (`month`, `year`, `volume`, `issue`, `journal_id`) VALUES (:month, :year, :volume, :issue, :journal_id)',
       {
@@ -60,6 +71,7 @@ const createIssuePeriod = async (req, res) => {
         type: sequelize.QueryTypes.INSERT,
       }
     );
+
     res.status(200).json({
       success: true,
       result: createIssue,
@@ -133,6 +145,33 @@ const deleteIssuePeriod = async (req, res) => {
   }
 }
 
+const getIssuePeriodByJournalId = async (req, res) => {
+  try {
+    const { journalId } = req.params;
+    const [getIssuePeriod] = await sequelize.query(
+      `SELECT * FROM issue_period
+      WHERE issue_period.journal_id = :id and issue_period.is_deleted = false`,
+      {
+        replacements: {
+          id: parseInt(journalId)
+        },
+      }
+    );
+    res.status(200).json({
+      success: true,
+      result: getIssuePeriod,
+      message: 'Get Issue period successfully.'
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to get isssue period.'
+    });
+  }
+}
+
+router.get('/:journalId', getIssuePeriodByJournalId);
 router.get('', getAllIssuePeriod);
 router.post('/', createIssuePeriod);
 router.put('/:id', updateIssuePeriod);

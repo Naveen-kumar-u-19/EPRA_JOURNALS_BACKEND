@@ -49,6 +49,15 @@ module.exports = (sequelize) => {
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     },
+    issue_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'issue_period',
+        key: 'id'
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
@@ -70,6 +79,7 @@ module.exports = (sequelize) => {
 
   Article.associate = (models) => {
     Article.belongsTo(models.Paper, { foreignKey: 'paper_id', as: 'paper' });
+    Article.belongsTo(models.IssuePeriod, { foreignKey: 'issue_id', as: 'issue_period' });
   };
   return Article;
 };

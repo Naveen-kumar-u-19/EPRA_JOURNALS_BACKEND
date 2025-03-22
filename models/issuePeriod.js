@@ -24,6 +24,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(15),
       allowNull: false
     },
+    isLatest: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
     journalId: {
       type: DataTypes.INTEGER,
       allowNull: false,
