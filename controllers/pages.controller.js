@@ -156,8 +156,36 @@ const getOnePageDetail = async (req, res) => {
   }
 }
 
+/**
+ * Function used to delete page
+ */
+const deletePage = async (req, res) => {
+  try {
+    const id = req.params?.id;
+    const [deletePage] = await (sequelize.query(
+      'UPDATE `page` SET `is_deleted`= true WHERE `id` =:id', {
+      replacements: {
+        id: id
+      }
+    }
+    ))
+    res.status(200).json({
+      success: true,
+      result: deletePage,
+      message: 'Page deleted successfully.'
+    })
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to delete page.',
+    });
+  }
+}
 router.get('', getAllPages);
 router.get('/:id', getOnePageDetail);
 router.post('', createPage);
 router.put('/:id', updatePageDetail);
+router.delete('/:id', deletePage);
 module.exports = router;
