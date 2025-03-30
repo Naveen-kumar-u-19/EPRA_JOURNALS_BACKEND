@@ -1,7 +1,7 @@
 const { DataTypes, Sequelize } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Paper = sequelize.define('Paper', {
+  const Paper = sequelize.define('Paper',{
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -12,51 +12,12 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    authorName: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    dob: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    designation: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    dept: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    collegeUniversity: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    institutionPlace: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    country: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    state: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    mobile: {
-      type: DataTypes.STRING(15),
-      allowNull: false
-    },
+   
     paperTitle: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    file: {
+    fileUrl: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
@@ -64,45 +25,15 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    volume: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    issue: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
+  
     status: {
       type: DataTypes.ENUM('PER', 'UNR', 'FOR', 'ACC', 'PUB', 'REV', 'CAN', 'REJ'),
       allowNull: false
     },
-    doj: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    doc: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    articleStatus: {
-      type: DataTypes.ENUM('P', 'N'),
-      allowNull: false
-    },
+  
     localIp: {
       type: DataTypes.STRING(50),
-      allowNull: false
-    },
-    imonth: {
-      type: DataTypes.STRING(50),
-      allowNull: false
-    },
-    captcha: {
-      type: DataTypes.STRING(10),
-      allowNull: false
-    },
-    isStatus: {
-      type: DataTypes.ENUM('0', '1'),
-      allowNull: false
+      allowNull: true
     },
     journalId: {
       type: DataTypes.INTEGER,

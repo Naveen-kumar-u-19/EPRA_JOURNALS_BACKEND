@@ -5,6 +5,9 @@ const { sequelize } = require('./models');
 const AdminRoute = require('./routes/api');
 const WebRoute = require('./routes/web');
 const passport = require('passport');
+const NodeCache = require('node-cache');
+const cache = new NodeCache();
+
 require('dotenv').config();
 
 app.use(cors());
@@ -34,6 +37,10 @@ sequelize.sync({ force: false }).then(() => {
   console.log('Connected to DB....');
 }).catch((err) => {
   console.log('Failed to connect DB...', err);
-})
+});
+
+const allCache = cache.mget(cache.keys());
+console.log("All Cached Data:", allCache);
+cache.flushAll();
 
 app.listen(process.env.PORT);

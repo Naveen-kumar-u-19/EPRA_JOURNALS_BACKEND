@@ -19,5 +19,7 @@ Object.keys(models).forEach((modelName) => {
   }
 });
 
+console.log('models', models);
+
 
 module.exports = { sequelize, ...models };
