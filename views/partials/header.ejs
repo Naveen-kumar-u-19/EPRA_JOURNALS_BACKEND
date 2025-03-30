@@ -1,0 +1,38 @@
+<header>
+    <div>
+        Header works!
+    </div>
+    <div id="countdown">
+        Countdown: <span id="time-remaining"></span>
+    </div>
+</header>
+
+
+<script>
+    // Convert the server time to JavaScript Date object
+    const countdownEndTime = new Date('<%= publicationTime %>');
+  
+    function updateCountdown() {
+      const now = new Date();
+      const timeDiff = countdownEndTime - now;
+  
+      if (timeDiff <= 0) {
+        document.getElementById('time-remaining').innerText = 'Time’s up!';
+        clearInterval(countdownInterval);
+        return;
+      }
+  
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+  
+      document.getElementById('time-remaining').innerText = 
+        `${hours}h ${minutes}m ${seconds}s`;
+    }
+  
+    // Run countdown every second
+    const countdownInterval = setInterval(updateCountdown, 1000);
+  
+    // Initialize the countdown immediately
+    updateCountdown();
+  </script>

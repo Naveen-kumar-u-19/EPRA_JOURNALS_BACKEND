@@ -6,72 +6,76 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
-      allowNull: false
+      allowNull: false,
     },
     doi: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     googleSearchLink: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
     },
     googleScholarLink: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
     },
     publishedOn: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
     },
-    order: {
+    articleOrder: { // Changed from `order`
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
     },
     docUrl: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: false,
     },
     abstract: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.TEXT, // Allows long abstracts
+      allowNull: true,
     },
     keywords: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
     },
     paperId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
-        model: 'paper',
-        key: 'id'
+        model: 'papers', // Ensure this matches your `Paper` model table name
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
-    issue_id: {
+    issueId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
-        model: 'issue_period',
-        key: 'id'
+        model: 'issue_periods', // Ensure this matches your `IssuePeriod` model table name
+        key: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     },
     isDeleted: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.fn('NOW'),
-      allowNull: true
+    downloadCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
-    updatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.fn('NOW'),
-      allowNull: true
-    }
+    viewsCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    url: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
   }, {
     tableName: 'article',
     underscored: true,
