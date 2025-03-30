@@ -104,7 +104,7 @@ const getOnePaperDetail = async (req, res) => {
 const updatePaperDetail = async (req, res) => {
   try {
     req.body['id'] = req.params?.id;
-    req.body['updateaAt'] = new Date();
+    req.body['updatedAt'] = new Date();
 
     const [updateJournal] = await sequelize.query(
       'UPDATE `paper` SET `paper_title` =:paper_title, `author_name` =:author_name, `mobile` =:mobile,`email` =:email,`designation`=:designation,`dept`=:dept,`college_university`=:college_university,`institution_place`=:institution_place, `state`=:state,`country`=:country,`local_ip`=:local_ip,`status`=:status where `id` =:id', {

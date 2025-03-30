@@ -58,19 +58,23 @@ module.exports = (sequelize) => {
       defaultValue: 'website',
       allowNull: true,
     },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
     },
     updatedAt: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
     },
   }, {
     tableName: 'pages', // Specify the table name
-    timestamps: true,   // Automatically handles createdAt and updatedAt
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
+    underscored: true,
   });
   return Page;
 };
