@@ -10,7 +10,7 @@ const getAllPages = async (req, res) => {
 
     // Get the overall count of pages list
     const [countResult] = await sequelize.query(
-      'SELECT COUNT(*) as count FROM `pages` WHERE `is_deleted` = false AND `page_title` LIKE :searchText', {
+      'SELECT COUNT(*) as count FROM `page` WHERE `is_deleted` = false AND `page_title` LIKE :searchText', {
       replacements: {
         searchText: `%${searchText}%`
       },
@@ -19,7 +19,7 @@ const getAllPages = async (req, res) => {
 
     // Get the pages list
     const [getPages] = await sequelize.query(
-      'SELECT * FROM `pages` WHERE `is_deleted` = false AND `page_title` LIKE :searchText ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
+      'SELECT * FROM `page` WHERE `is_deleted` = false AND `page_title` LIKE :searchText ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
       {
         replacements: {
           offset: parseInt(offset),
@@ -53,7 +53,7 @@ const getAllPages = async (req, res) => {
 const createPage = async (req, res) => {
   try {
     const [createPage] = await sequelize.query(
-      `INSERT INTO pages (page_code, page_title, meta_description, meta_keywords, content, header_scripts,footer_scripts,og_title,og_description, og_image, og_url,og_type) 
+      `INSERT INTO page (page_code, page_title, meta_description, meta_keywords, content, header_scripts,footer_scripts,og_title,og_description, og_image, og_url,og_type) 
       VALUES (:page_code, :page_title, :meta_description, :meta_keywords, :content, :header_scripts, :footer_scripts, :og_title, :og_description, :og_image, :og_url, :og_type)`,
       {
         replacements: req.body,
@@ -84,9 +84,8 @@ const updatePageDetail = async (req, res) => {
     req.body['updatedAt'] = new Date();
 
     const [updatePage] = await sequelize.query(
-      `UPDATE pages 
-       SET page_code = :page_code,
-           page_title = :page_title,
+      `UPDATE page 
+       SET page_title = :page_title,
            meta_description = :meta_description,
            meta_keywords = :meta_keywords,
            content = :content,
@@ -98,7 +97,7 @@ const updatePageDetail = async (req, res) => {
            og_url = :og_url,
            og_type = :og_type,
            updated_at = :updatedAt
-       WHERE id = :id and is_delete = false`,
+       WHERE id = :id and is_deleted = false`,
       {
         replacements: req.body,
         type: sequelize.QueryTypes.UPDATE,
@@ -127,7 +126,7 @@ const getOnePageDetail = async (req, res) => {
     const id = req.params?.id;
     // Get the pages list
     const [getPageDetail] = await sequelize.query(
-      'SELECT * FROM `pages` WHERE `is_deleted` = false AND `id` = :id',
+      'SELECT * FROM `page` WHERE `is_deleted` = false AND `id` = :id',
       {
         replacements: {
           id: id
