@@ -72,10 +72,16 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    url: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
     },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
+    }
   }, {
     tableName: 'article',
     underscored: true,
