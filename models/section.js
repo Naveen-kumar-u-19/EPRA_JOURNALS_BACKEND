@@ -1,39 +1,43 @@
 const { DataTypes, Sequelize } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Section = sequelize.define('Section',{
+
+  const Section = sequelize.define('Section', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    section_code: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+    sectionCode: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
     },
     title: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING(255),
+      allowNull: false,
     },
     content: {
-        type: DataTypes.TEXT,  // Can store JSON or HTML
-        allowNull: false,
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      defaultValue: Sequelize.fn('NOW'),
       allowNull: true
     },
     updatedAt: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      defaultValue: Sequelize.fn('NOW'),
       allowNull: true
-    }
-}, {
+    },
+  }, {
     tableName: 'section',
-    timestamps: true,
-});
-
+    underscored: true,
+  });
   return Section;
 };

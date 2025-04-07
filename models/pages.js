@@ -73,7 +73,7 @@ module.exports = (sequelize) => {
       allowNull: true
     },
   }, {
-    tableName: 'page', // Specify the table name
+    tableName: 'page',
     underscored: true,
   });
   return Page;
