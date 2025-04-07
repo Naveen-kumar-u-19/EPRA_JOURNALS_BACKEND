@@ -1,7 +1,7 @@
 const { DataTypes, Sequelize } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Author = sequelize.define('Author', 
+  const Author = sequelize.define('Author',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -16,10 +16,6 @@ module.exports = (sequelize) => {
           notEmpty: true,
           len: [1, 255],
         },
-      },
-      dob: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
       },
       designation: {
         type: DataTypes.STRING(100),
@@ -38,6 +34,14 @@ module.exports = (sequelize) => {
         },
       },
       collegeUniversity: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [1, 255],
+        },
+      },
+      institutionPlace: {
         type: DataTypes.STRING(255),
         allowNull: false,
         validate: {
@@ -118,16 +122,16 @@ module.exports = (sequelize) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.fn('NOW'),
-      allowNull: true
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.fn('NOW'),
-      allowNull: true
-    }
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.fn('NOW'),
+        allowNull: true
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.fn('NOW'),
+        allowNull: true
+      }
     }, {
     tableName: 'author',
     underscored: true,

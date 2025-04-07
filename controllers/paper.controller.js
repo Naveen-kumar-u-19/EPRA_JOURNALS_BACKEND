@@ -27,9 +27,9 @@ const getPaperDetails = async (req, res) => {
 
     // Get the paper list
     const [paperDetails] = await sequelize.query(
-      `SELECT paper.*,journal.name AS journal_name, journal.is_deleted as journal_is_deleted FROM paper 
+      `SELECT  paper.*,journal.name AS journal_name, journal.is_deleted as journal_is_deleted FROM paper 
       INNER JOIN journal ON paper.journal_id = journal.id
-      WHERE paper.is_deleted= false AND journal.is_deleted = false AND (:status = '' OR paper.status = :status) AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY id DESC LIMIT :limit OFFSET :offset`,
+      WHERE paper.is_deleted= false AND journal.is_deleted = false AND (:status = '' OR paper.status = :status) AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY paper.id DESC LIMIT :limit OFFSET :offset`,
       {
         replacements: {
           status: status,
@@ -65,8 +65,9 @@ const getOnePaperDetail = async (req, res) => {
   try {
     const { id } = req.params;
     const [getOnePaper] = await sequelize.query(
-      `SELECT paper.*,  journal.id AS journal_id, journal.name AS journal_name, journal.category AS journal_category, journal.status AS journal_status, journal.is_deleted as journal_is_deleted 
-      FROM paper INNER JOIN journal ON paper.journal_id = journal.id 
+      `SELECT paper.*, journal.id AS journal_id, journal.name AS journal_name, journal.category AS journal_category, journal.status AS journal_status, journal.is_deleted as journal_is_deleted 
+      FROM paper 
+      INNER JOIN journal ON paper.journal_id = journal.id
       WHERE paper.id = :id AND paper.is_deleted = false AND  journal.is_deleted = false`,
       {
         replacements: {
@@ -75,6 +76,15 @@ const getOnePaperDetail = async (req, res) => {
       }
     );
     if (getOnePaper?.length) {
+      const [getAuthorDetail] = await sequelize.query(
+        `SELECT * FROM author WHERE author.paper_id = :id`, {
+        replacements: {
+          id: id
+        }
+      }
+      )
+      getOnePaper[0]['authorDetails'] = getAuthorDetail;
+
       res.status(200).json({
         success: true,
         result: getOnePaper[0],
@@ -105,9 +115,9 @@ const updatePaperDetail = async (req, res) => {
   try {
     req.body['id'] = req.params?.id;
     req.body['updatedAt'] = new Date();
-
+    console.log('Body.....', req.body);
     const [updateJournal] = await sequelize.query(
-      'UPDATE `paper` SET `paper_title` =:paper_title, `author_name` =:author_name, `mobile` =:mobile,`email` =:email,`designation`=:designation,`dept`=:dept,`college_university`=:college_university,`institution_place`=:institution_place, `state`=:state,`country`=:country,`local_ip`=:local_ip,`status`=:status where `id` =:id', {
+      'UPDATE `paper` SET `paper_title` =:paper_title,`local_ip`=:local_ip,`status`=:status where `id` =:id', {
       replacements: req.body
     }
     )

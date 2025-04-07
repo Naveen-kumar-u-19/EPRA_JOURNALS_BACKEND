@@ -55,7 +55,7 @@ const createJournal = async (req, res) => {
       req.body.status = JSON.parse(req.body.status);
     }
     const [createJournal] = await sequelize.query(
-      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :shortCode)',
+      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`, `img_url`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :shortCode, :imgUrl)',
       {
         replacements: req.body,
         type: sequelize.QueryTypes.INSERT,
@@ -90,7 +90,7 @@ const updateJournal = async (req, res) => {
     req.body['updatedAt'] = new Date();
 
     const [updateJournal] = await sequelize.query(
-      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :shortCode, `updated_at`= :updatedAt WHERE `id` = :id',
+      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :shortCode, `updated_at`= :updatedAt, `img_url` = :imgUrl WHERE `id` = :id',
       {
         replacements: req.body,
       }

@@ -80,6 +80,14 @@ const createPage = async (req, res) => {
  */
 const updatePageDetail = async (req, res) => {
   try {
+    if (!req.params?.id || !req.body) {
+      res.status(400).json({
+        success: false,
+        message: 'Update data is missing.',
+      });
+    }
+
+
     req.body['id'] = req.params?.id;
     req.body['updatedAt'] = new Date();
 
@@ -124,6 +132,12 @@ const updatePageDetail = async (req, res) => {
 const getOnePageDetail = async (req, res) => {
   try {
     const id = req.params?.id;
+    if (!id) {
+      res.status(400).json({
+        success: false,
+        message: 'Id is missing.',
+      });
+    }
     // Get the pages list
     const [getPageDetail] = await sequelize.query(
       'SELECT * FROM `page` WHERE `is_deleted` = false AND `id` = :id',
@@ -162,6 +176,12 @@ const getOnePageDetail = async (req, res) => {
 const deletePage = async (req, res) => {
   try {
     const id = req.params?.id;
+    if (!id) {
+      res.status(400).json({
+        success: false,
+        message: 'Id is missing.',
+      });
+    }
     const [deletePage] = await (sequelize.query(
       'UPDATE `page` SET `is_deleted`= true WHERE `id` =:id', {
       replacements: {
