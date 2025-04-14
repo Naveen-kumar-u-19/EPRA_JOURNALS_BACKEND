@@ -1,33 +1,38 @@
-const { DataTypes  } = require('sequelize');
-
-
-
+const { DataTypes, Sequelize } = require('sequelize');
 module.exports = (sequelize) => {
   const PublicationSchedule = sequelize.define('PublicationSchedule', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    next_publication_time: {
-        type: DataTypes.DATE,
-        allowNull: false,
+    nextPublicationTime: {
+      type: DataTypes.DATE,
+      allowNull: false,
     },
-        createdAt: {
-          type: DataTypes.DATE,
-          defaultValue: DataTypes.NOW,
-          allowNull: true
-        },
-        updatedAt: {
-          type: DataTypes.DATE,
-          defaultValue: DataTypes.NOW,
-          allowNull: true
-        }
-}, {
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW'),
+      allowNull: true
+    }
+  }, {
     tableName: 'publication_schedule',
-    timestamps: true,
-}
-);
+    underscored: true,
+  }
+  );
 
   return PublicationSchedule;
 };
