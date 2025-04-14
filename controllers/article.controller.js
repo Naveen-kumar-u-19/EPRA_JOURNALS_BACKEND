@@ -13,7 +13,7 @@ const createArticle = async (req, res) => {
     if (!Number(req.body?.order)) {
       req.body['order'] = null;
     }
-    const uploadDetail = await uploadFile(req); //Upload Doc
+    const uploadDetail = await uploadFile(req, 'article'); //Upload Doc
     if (uploadDetail.key) {
       req.body['doc_url'] = uploadDetail?.key;
       console.log(req.body);
@@ -66,7 +66,7 @@ const updateArticle = async (req, res) => {
       req.body['order'] = null;
     }
     if (req.file?.originalname) {
-      const uploadDetail = await uploadFile(req); //Upload Doc
+      const uploadDetail = await uploadFile(req, 'article'); //Upload Doc
       if (uploadDetail.key) {
         req.body['doc_url'] = uploadDetail?.key;
       }

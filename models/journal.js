@@ -1,7 +1,7 @@
 const { DataTypes, Sequelize } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Journal = sequelize.define('Journal',{
+  const Journal = sequelize.define('Journal', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -58,9 +58,6 @@ module.exports = (sequelize) => {
       defaultValue: Sequelize.fn('NOW'),
       allowNull: true
     }
-  }, {
-    tableName: 'journal',
-    underscored: true,
   }, {
     tableName: 'journal',
     underscored: true,

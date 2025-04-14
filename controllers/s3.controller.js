@@ -7,13 +7,13 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 //Function used to upload file to aws
-const uploadFile = async (req) => {
+const uploadFile = async (req, folderName) => {
   if (!req.file) {
     throw new Error("No file uploaded");
   }
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `${Date.now()}-${req.file.originalname}`,
+    Key: `${folderName}/${Date.now()}-${req.file.originalname}`,
     Body: req.file.buffer,
     ContentType: req.file.mimetype,
   };
