@@ -1,4 +1,5 @@
 const { DataTypes, Sequelize } = require('sequelize');
+
 module.exports = (sequelize) => {
   const PublicationSchedule = sequelize.define('PublicationSchedule', {
     id: {
@@ -9,14 +10,6 @@ module.exports = (sequelize) => {
     nextPublicationTime: {
       type: DataTypes.DATE,
       allowNull: false,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
     },
     createdAt: {
       type: DataTypes.DATE,

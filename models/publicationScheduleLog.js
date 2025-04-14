@@ -1,35 +1,43 @@
 const { DataTypes, Sequelize } = require('sequelize');
 
-
-
 module.exports = (sequelize) => {
-  const PublicationScheduleLog = sequelize.define('PublicationScheduleLog', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    previous_publication_time: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    new_publication_time: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    updated_by: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+    const PublicationScheduleLog = sequelize.define('PublicationScheduleLog', {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        nextPublicationTime: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        scheduleId: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            defaultValue: Sequelize.fn('NOW'),
+            allowNull: true
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            defaultValue: Sequelize.fn('NOW'),
+            allowNull: true
+        },
+    }, {
+        tableName: 'publication_schedule_log',
+        underscored: true,
     }
-}, {
-    tableName: 'publication_schedule_log',
-    timestamps: false,
-}
-);
+    );
 
-  return PublicationScheduleLog;
+    return PublicationScheduleLog;
 };

@@ -13,36 +13,48 @@ const createPublicationDate = async (req, res) => {
         message: 'Failed to create new publication date.',
       });
     }
-
     // Convert ISO date string to MySQL DATETIME format
     const nextPublicationTime = new Date(detail.nextPublicationTime)
       .toISOString()
       .slice(0, 19)
       .replace('T', ' ');
 
-    const isActive = detail.isActive ?? true;
+    const isActive = true;
 
-    if (isActive) {
-      const [updateExistingPublication] = await sequelize.query(
-        'UPDATE `publication_schedule` SET `is_active` = false WHERE `is_active` = true and is_deleted = false'
-      );
-    }
-
-    //Create publication
-    const [createPublication] = await sequelize.query(
-      'INSERT INTO `publication_schedule` (`next_publication_time`, `is_active`) VALUES (:nextPublicationTime, :isActive)',
-      {
-        replacements: { nextPublicationTime, isActive },
-        type: sequelize.QueryTypes.INSERT,
-      }
+    //Delete existing publication schedule
+    const [deletePublication] = await sequelize.query(
+      'DELETE FROM publication_schedule'
     );
-
-    if (createPublication) {
-      res.status(200).json({
-        success: true,
-        detail: createPublication,
-        message: 'Next publication date created successfully.',
-      });
+    if (deletePublication) {
+      //Insert new publication schedule
+      const [createNew] = await sequelize.query(
+        'INSERT INTO `publication_schedule` (`next_publication_time`) VALUES (:nextPublicationTime)',
+        {
+          replacements: { nextPublicationTime },
+          type: sequelize.QueryTypes.INSERT,
+        }
+      );
+      if (createNew) {
+        //Update log
+        const [updateExistingPublication] = await sequelize.query(
+          'UPDATE `publication_schedule_log` SET `is_active` = false WHERE `is_active` = true and is_deleted = false'
+        );
+        //Create publication schedule log
+        const [createPublication] = await sequelize.query(
+          'INSERT INTO `publication_schedule_log` (`next_publication_time`, `is_active`, `schedule_id`) VALUES (:nextPublicationTime, :isActive, :createNew)',
+          {
+            replacements: { nextPublicationTime, isActive, createNew },
+            type: sequelize.QueryTypes.INSERT,
+          }
+        );
+        if (createPublication) {
+          res.status(200).json({
+            success: true,
+            detail: createPublication,
+            message: 'Next publication date created successfully.',
+          });
+        }
+      }
     }
   }
   catch (error) {
@@ -63,12 +75,12 @@ const getPublicationDate = async (req, res) => {
 
     // Get the overall count of publication date
     const [countResult] = await sequelize.query(
-      'SELECT COUNT(*) as count FROM `publication_schedule` WHERE `is_deleted` = false'
+      'SELECT COUNT(*) as count FROM `publication_schedule_log` WHERE `is_deleted` = false'
     );
 
     // Get the publication detail list
     const [getPublicationDetail] = await sequelize.query(
-      'SELECT * FROM `publication_schedule` WHERE `is_deleted` = false ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
+      'SELECT * FROM `publication_schedule_log` WHERE `is_deleted` = false ORDER BY `id` DESC LIMIT :limit OFFSET :offset',
       {
         replacements: {
           offset: parseInt(offset),
@@ -101,7 +113,8 @@ const getPublicationDate = async (req, res) => {
 const deletePublicationDate = async (req, res) => {
   try {
     const id = req.params?.id;
-    if (!id) {
+    const scheduleId = req.params?.scheduleId;
+    if (!id || !scheduleId) {
       res.status(400).json({
         success: false,
         error: error.message || error,
@@ -109,8 +122,16 @@ const deletePublicationDate = async (req, res) => {
       });
     }
 
-    const [deletePublication] = await sequelize.query(
-      `UPDATE publication_schedule SET is_active = false, is_deleted = true where id = :id`,
+    const [deleteScheduledPublication] = await sequelize.query(
+      `DELETE FROM publication_schedule WHERE id = :id`, {
+      replacements: {
+        id: scheduleId
+      }
+    }
+    )
+
+    const [deletePublicationLog] = await sequelize.query(
+      `UPDATE publication_schedule_log SET is_active = false, is_deleted = true where id = :id`,
       {
         replacements: {
           id: id
@@ -136,6 +157,6 @@ const deletePublicationDate = async (req, res) => {
 
 router.get('', getPublicationDate);
 router.post('', createPublicationDate);
-router.delete('/:id', deletePublicationDate);
+router.delete('/:id/schedule/:scheduleId', deletePublicationDate);
 
 module.exports = router;
