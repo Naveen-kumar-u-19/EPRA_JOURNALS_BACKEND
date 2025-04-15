@@ -85,7 +85,7 @@ class JournalService {
         if (!articlesArchives) {
             const query = `SELECT id, month, year, articles_count FROM issue_period WHERE journal_id = :journalId and is_deleted = 0 ORDER BY id ASC;`;
             articlesArchives = await sequelize.query(query, { replacements: { journalId }, type: sequelize.QueryTypes.SELECT });
-           
+
             const groupedByYear = {};
 
             articlesArchives.forEach(row => {
@@ -156,23 +156,43 @@ class JournalService {
     // To display on article details page
     static async getOneArticleById(articleId) {
 
+        //     const query = `
+        //     SELECT 
+        //       a.*, 
+        //       ip.year, ip.month, ip.volume, ip.issue, ip.articles_count,
+        //       j.name AS journal_name, 
+        //       j.short_code AS journal_short_code
+        //     FROM 
+        //       article a
+        //     LEFT JOIN 
+        //       issue_period ip ON a.issue_id = ip.id AND ip.is_deleted = false
+        //     LEFT JOIN 
+        //       journal j ON ip.journal_id = j.id AND j.is_deleted = false
+        //     WHERE 
+        //       a.id = :articleId 
+        //       AND a.is_deleted = false
+        //     LIMIT 1;
+        //   `;
+
         const query = `
-        SELECT 
-          a.*, 
-          ip.year, ip.month, ip.volume, ip.issue, ip.articles_count,
-          j.name AS journal_name, 
-          j.short_code AS journal_short_code
-        FROM 
-          article a
-        LEFT JOIN 
-          issue_period ip ON a.issue_id = ip.id AND ip.is_deleted = false
-        LEFT JOIN 
-          journal j ON ip.journal_id = j.id AND j.is_deleted = false
-        WHERE 
-          a.id = :articleId 
-          AND a.is_deleted = false
-        LIMIT 1;
-      `;
+            SELECT 
+                a.*, 
+                ip.year, ip.month, ip.volume, ip.issue, ip.articles_count,
+                j.name AS journal_name, 
+                j.short_code AS journal_short_code,
+                p.paper_title
+            FROM 
+                article a
+            LEFT JOIN 
+                issue_period ip ON a.issue_id = ip.id AND ip.is_deleted = false
+            LEFT JOIN 
+                journal j ON ip.journal_id = j.id AND j.is_deleted = false
+            LEFT JOIN 
+                paper p ON a.paper_id = p.id
+            WHERE 
+                a.id = :articleId 
+                AND a.is_deleted = false
+            LIMIT 1;`;
         const article = await sequelize.query(query, {
             replacements: { articleId },
             type: sequelize.QueryTypes.SELECT
