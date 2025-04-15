@@ -1,3 +1,200 @@
-<div>
-    Footer works!
-</div>
+<!DOCTYPE html>
+<head>
+      <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2d6a4f; /* Darker green for footer background */
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+
+        .footer-section {
+            flex: 1;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            color: #a8e6cf; /* Light green for headings */
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background-color: #ff6f61; /* Coral accent for underline */
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            font-size: 14px;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: #ff6f61;
+        }
+
+        /* Social Media Icons */
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            color: #fff;
+            font-size: 20px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ff6f61;
+            transform: scale(1.2);
+        }
+
+        /* Footer Bottom */
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 20px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid #a8e6cf;
+            font-size: 14px;
+        }
+
+        .footer-bottom-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-bottom-right span {
+            color: #e0e0e0;
+        }
+
+        .footer-bottom-right a {
+            color: #a8e6cf;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .footer-bottom-right a:hover {
+            color: #ff6f61;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .footer-section {
+                text-align: center;
+            }
+
+            .footer-section h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Submit Your Paper</a></li>
+                    <li><a href="#">Track Your Paper Status</a></li>
+                    <li><a href="#">Certificate Download</a></li>
+                </ul>
+            </div>
+
+            <!-- For Authors -->
+            <div class="footer-section">
+                <h3>For Authors</h3>
+                <ul>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Impact Factor</a></li>
+                    <li><a href="#">Plagiarism Policy</a></li>
+                    <li><a href="#">Retraction Policy</a></li>
+                    <li><a href="#">Publication Policy</a></li>
+                </ul>
+            </div>
+
+            <!-- Policies (Moved from Bottom Line to List) -->
+            <div class="footer-section">
+                <h3>Policies</h3>
+                <ul>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-right">
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+                <span>© 2025 EPRA JOURNALS. ALL RIGHTS RESERVED</span>
+                <a href="#">Developed by Peace Soft</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

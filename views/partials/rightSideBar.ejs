@@ -1,0 +1,144 @@
+<style>
+    .sidebar {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .latest-news,
+    .call-for-papers,
+    .feedback-container {
+        background-color: #a8e6cf;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .latest-news h3,
+    .call-for-papers h3,
+    .feedback-container h3 {
+        font-size: 18px;
+        color: #2d6a4f;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .news-list,
+    .papers-list,
+    .feedback-list {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .news-list-inner,
+    .papers-list-inner,
+    .feedback-list-inner {
+        position: absolute;
+        width: 100%;
+        animation: scroll-up 15s linear infinite;
+    }
+
+    .news-list-inner:hover,
+    .papers-list-inner:hover,
+    .feedback-list-inner:hover {
+        animation-play-state: paused;
+    }
+
+    .news-item,
+    .paper-item,
+    .feedback-item {
+        margin-bottom: 10px;
+        padding: 5px;
+        /* background-color: #fff; */
+        border-radius: 5px;
+        font-size: 14px;
+        color: #333;
+    }
+    .rendered-html {
+    line-height: 1.7;
+  }
+
+  .rendered-html ul {
+    padding-left: 20px;
+    margin-bottom: 1em;
+  }
+
+  .rendered-html li {
+    list-style-type: disc;
+    margin-bottom: 5px;
+  }
+
+  .rendered-html p {
+    margin-bottom: 1em;
+  }
+    @keyframes scroll-up {
+        0% {
+            transform: translateY(100%);
+        }
+
+        100% {
+            transform: translateY(-100%);
+        }
+    }
+</style>
+
+<div class="sidebar">
+    <div class="latest-news">
+        <h3>Latest News</h3>
+        <div class="news-list">
+            <div class="news-list-inner rendered-html" id="news-list">
+                <%- safeHtml %>
+            </div>
+        </div>
+    </div>
+    <div class="call-for-papers">
+        <h3>Call for Papers</h3>
+        <div class="papers-list">
+
+            <!-- <div class="papers-list-inner" id="papers-list">Welcome to EPRA Journals</div> -->
+            <div class="papers-list-inner" id="papers-list"><%- sections.CALL_FOR_PAPER.content %></div>
+        </div>
+    </div>
+    <div class="feedback-container">
+        <h3>Recent Feedbacks</h3>
+        <div class="feedback-list">
+            <div class="feedback-list-inner">
+                <% if (latestFeedbacks && latestFeedbacks.length) { %>
+                    <% latestFeedbacks.forEach(feedback => { %>
+                        <div class="feedback-item">
+                            <p><%= feedback.feedback %></p>
+                            <p>- <%= feedback.fullName %></p>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No feedback available.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback-list">
+      
+    </div>
+</div>
+
+<script>
+    // setTimeout(()=> {
+    //     console.log(CALL_FOR_PAPER, LATEST_NEWS);
+
+    // }, 2000);
+    // var newsList = document.getElementById("news-list");
+    // const newsListData = newsList.textContent;
+    // newsList.innerHTML = newsListData;
+   
+    // var papersList = document.getElementById("papers-list");
+    // const papersListData = papersList.textContent;
+    // papersList.innerHTML = papersListData;
+
+
+</script>

@@ -1,38 +1,333 @@
+<style>
+  /* Header */
+  header {
+    background-color: #a8e6cf;
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo img {
+    width: 40px;
+    margin-right: 10px;
+  }
+
+  .logo h1 {
+    font-size: 24px;
+    color: #2d6a4f;
+  }
+
+  .logo h1 span {
+    color: #ff6f61;
+  }
+
+  .countdown-timer {
+    background-color: #fff;
+    border-radius: 3px;
+    padding: 5px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #2d6a4f;
+  }
+
+  .countdown-timer span {
+    font-weight: 600;
+    color: #ff6f61;
+  }
+
+  .countdown-timer .timer-label {
+    font-size: 12px;
+    color: #2d6a4f;
+    margin-right: 2px;
+  }
+
+  .countdown-timer .timer-value {
+    font-size: 14px;
+    color: #ff6f61;
+    font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
+    display: inline-block;
+    width: 24px;
+    text-align: center;
+  }
+
+  .nav-menu {
+    background-color: #2d6a4f;
+    border-radius: 3px;
+    padding: 10px 0;
+    display: flex;
+    /* justify-content: center; */
+  }
+
+  .nav-menu ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding-left: 5px;
+    margin-bottom: 2px;
+  }
+
+  .nav-menu ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+
+  .nav-menu ul li a:hover {
+    color: #ff6f61;
+  }
+
+  .hamburger {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+    color: #2d6a4f;
+  }
+
+  .close-btn {
+    display: none;
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
+    margin-bottom: 20px;
+    align-self: flex-end;
+  }
+
+  .news-ticker {
+    background-color: #2d6a4f;
+    color: white;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-top: 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .news-ticker p {
+    display: inline-block;
+    animation: scroll 30s linear infinite;
+  }
+
+  .news-scrolling:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+
+    /* Header */
+    .header-top {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hamburger {
+      display: block;
+      margin-left: auto;
+    }
+
+    .nav-menu {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #2d6a4f;
+      flex-direction: column;
+      padding: 20px;
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+      margin: 0;
+      border-radius: 0;
+    }
+
+    .nav-menu.active {
+      left: 0;
+    }
+
+    .nav-menu ul {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+
+    .nav-menu ul li a {
+      font-size: 16px;
+    }
+
+    .close-btn {
+      display: block;
+    }
+
+    .countdown-timer {
+      font-size: 12px;
+      gap: 5px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .countdown-timer .timer-label {
+      font-size: 10px;
+      margin-right: 1px;
+    }
+
+    .countdown-timer .timer-value {
+      font-size: 12px;
+      width: 20px;
+    }
+
+    .news-ticker {
+      height: 35px;
+      margin-top: 15px;
+    }
+
+
+  }
+</style>
 <header>
-    <div>
-        Header works!
+  <% publicationTimeISO=publicationTime.toISOString(); %>
+
+    <div class="header-top">
+      <div class="logo">
+        <!-- <img src="./epra_logo_1.png" alt="EPRA Logo"> -->
+        <h1>[Logo] EPRA Trust <span>Publishing</span></h1>
+      </div>
+      <div class="hamburger">☰</div>
+      <div class="countdown-timer">
+        <span>Next Publication In:</span>
+        <span class="timer-label">Days:</span>
+        <span class="timer-value" id="days">00</span>
+        <span class="timer-label">Hours:</span>
+        <span class="timer-value" id="hours">00</span>
+        <span class="timer-label">Minutes:</span>
+        <span class="timer-value" id="minutes">00</span>
+        <span class="timer-label">Seconds:</span>
+        <span class="timer-value" id="seconds">00</span>
+      </div>
     </div>
-    <div id="countdown">
-        Countdown: <span id="time-remaining"></span>
-    </div>
+    <nav>
+      <div class="nav-menu">
+        <div class="close-btn">✖</div>
+        <% if (!isJournalPage && !isArticlePage ) { %>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Editorial Board</a></li>
+            <li><a href="#">Info Centre</a></li>
+            <li><a href="#">Publication Fee</a></li>
+            <li><a href="#">Indexing</a></li>
+            <li><a href="#">Review Process</a></li>
+            <li><a href="#">Feedback</a></li>
+            <li><a href="#">Contact Us</a></li>
+          </ul>
+          <% } else { %>
+            <!-- Menu A -->
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Current Issue</a></li>
+              <li><a href="#">Date Schedule</a></li>
+              <li><a href="#">Archives</a></li>
+              <li><a href="#">Editorial Team</a></li>
+              <li><a href="#">Publication Fee</a></li>
+            </ul>
+            <% } %>
+      </div>
+    </nav>
+    <% if (!isJournalPage && !isArticlePage) { %>
+      <div class="news-ticker">
+        <!-- <div id="news-scrolling"> </div> -->
+        <!-- <p id="news-scrolling">News Scrolling: Stay updated with the latest announcements and updates from EPRA
+      Trust Publishing!</p> -->
+        <p id="news-scrolling">
+          <%= sections.NEWS.content %>
+        </p>
+      </div>
+      <% } %>
 </header>
 
-
 <script>
-    // Convert the server time to JavaScript Date object
-    const countdownEndTime = new Date('<%= publicationTime %>');
-  
-    function updateCountdown() {
-      const now = new Date();
-      const timeDiff = countdownEndTime - now;
-  
-      if (timeDiff <= 0) {
-        document.getElementById('time-remaining').innerText = 'Time’s up!';
-        clearInterval(countdownInterval);
-        return;
-      }
-  
-      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-  
-      document.getElementById('time-remaining').innerText = 
-        `${hours}h ${minutes}m ${seconds}s`;
+  const hamburger = document.querySelector('.hamburger');
+  const navMenu = document.querySelector('.nav-menu');
+  const closeBtn = document.querySelector('.close-btn');
+
+  var newsList = document.getElementById('news-scrolling');
+  if(newsList) {
+    newsList.innerHTML = newsList.textContent;
+  }
+
+  hamburger.addEventListener('click', () => {
+    navMenu.classList.add('active');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    navMenu.classList.remove('active');
+  });
+
+  document.addEventListener('click', (e) => {
+    const isClickInsideNav = navMenu.contains(e.target);
+    const isClickOnHamburger = hamburger.contains(e.target);
+
+    if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+      navMenu.classList.remove('active');
     }
-  
-    // Run countdown every second
-    const countdownInterval = setInterval(updateCountdown, 1000);
-  
-    // Initialize the countdown immediately
-    updateCountdown();
-  </script>
+  });
+
+  // Timer
+  async function updateCountdown() {
+    const now = new Date();
+    const publicationTime1 = new Date('<%= publicationTimeISO %>');
+    const timeDifference = publicationTime1 - now;
+
+    if (timeDifference <= 0) {
+
+      document.getElementById('days').textContent = '00';
+      document.getElementById('hours').textContent = '00';
+      document.getElementById('minutes').textContent = '00';
+      document.getElementById('seconds').textContent = '00';
+      // document.getElementById('countdown-timer').innerHTML = '<p> Will be Announced Shortly!</p>';
+      return;
+    }
+
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+    document.getElementById('days').textContent = String(days).padStart(2, '0');
+    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+  }
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>

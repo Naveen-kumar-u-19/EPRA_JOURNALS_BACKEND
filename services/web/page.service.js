@@ -1,4 +1,4 @@
-const { sequelize } = require('../models');
+const { sequelize } = require('../../models');
 
 async function getPageData(PageCode) {
     try {
@@ -9,7 +9,7 @@ async function getPageData(PageCode) {
           type: sequelize.QueryTypes.SELECT, // Specify query type
         }
       );
-      console.log(result);
+      // console.log(result);
       if(!result) {
         throw { status: 404, message: 'Section not available' };
       }

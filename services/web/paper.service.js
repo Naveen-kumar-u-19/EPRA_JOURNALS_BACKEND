@@ -1,5 +1,6 @@
 
 const { sequelize } = require('../../models');
+const { uploadFile, upload } = require('../../controllers/s3.controller');
 
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // Cache for 1 hour
@@ -115,7 +116,87 @@ class PaperService {
     
         return { success: true, message: `${type} count updated successfully.` };
     }
-  
+    generatePaperIndex() {
+        return '123'
+    }
+    static async submitPaper(req, res) {
+        const t = await sequelize.transaction(); // Start transaction
+
+        try {
+            // const uploadDetail = await uploadFile(req); //Upload Doc
+            console.log('req.body.data', req.body.data);
+            const { paperTitle, journalId,  authors } = JSON.parse(req.body.data); // need to add file and authors
+            // const file = req.file; // File from multer
+            console.log(paperTitle, journalId , authors, authors?.length === 0 )
+            if (!paperTitle || !journalId  || !authors || authors?.length === 0 ) { // need to add file || authors || authors.length === 0
+                // return res.status(400).json({ success: false, message: "All fields and a file are required." });
+                throw new Error('All fields and a file are required.');
+                
+            }
+    
+            // Upload file to AWS S3
+            // const fileUrl = await uploadFileToS3(file, 'papers');
+            const fileUrl = 'doc';
+            console.log('req.file', req.file);
+    
+         
+    
+            // Insert Paper
+            const [paperResult] = await sequelize.query(
+                `INSERT INTO paper (paper_index, paper_title, file_url, status, local_ip, journal_id, created_at, updated_at) 
+                 VALUES (:paperIndex, :paperTitle, :fileUrl, 'PER', NULL, :journalId, NOW(), NOW())`,
+                {
+                    replacements: {
+                        paperIndex: '123',
+                        paperTitle,
+                        fileUrl,
+                        journalId
+                    },
+                    type: sequelize.QueryTypes.INSERT,
+                    transaction: t
+                }
+            );
+            console.log(paperResult);
+            const paperId = paperResult; 
+    
+            // Ensure authors is a valid array
+            const authorRecords = (Array.isArray(authors) ? authors : JSON.parse(authors)).map(author => [
+                author.authorName,
+                author.mobile,
+                author.email,
+                author.designation,
+                author.department,
+                author.college,
+                author.city,
+                author.country,
+                author.state,
+                paperId,
+                // author.dob ? new Date(author.dob) : null,
+                false // isMainAuthor
+            ]);
+            console.log(authorRecords);
+            // Insert Authors
+            await sequelize.query(
+                `INSERT INTO author (author_name, mobile, email, designation, dept, college_university, city, country, state, paper_id, is_main_author, created_at, updated_at)
+                 VALUES ${authorRecords.map(() => "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NOW(), NOW())").join(", ")}`,
+                {
+                    replacements: authorRecords.flat(),
+                    type: sequelize.QueryTypes.INSERT,
+                    transaction: t
+                }
+            );
+    
+            await t.commit(); // Commit transaction
+            return paperResult;
+    
+        } catch (error) {
+            await t.rollback(); // Rollback transaction
+            console.error("Error submitting paper:", error);
+            return error;
+            // return res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
  
 }
 
