@@ -219,6 +219,23 @@ class JournalService {
         return result.length > 0 ? result[0].id : null;
     }
 
+    static async getCurrentIssueIdWithYearAndMonth(year, month) {
+        const query = `
+            SELECT id FROM issue_period 
+            WHERE year = :year and month = :month
+            AND is_latest = 1 
+            AND is_deleted = 0 
+            LIMIT 1;
+        `;
+
+        const result = await sequelize.query(query, {
+            replacements: { year, month },
+            type: sequelize.QueryTypes.SELECT
+        });
+
+        return result.length > 0 ? result[0].id : null;
+    }
+
 }
 
 module.exports = JournalService;

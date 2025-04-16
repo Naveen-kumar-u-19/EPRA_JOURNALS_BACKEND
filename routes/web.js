@@ -124,6 +124,39 @@ router.get('/journal/:journalCode', async (req, res) => {
   }
 });
 
+router.get('/journal/:journalCode/archives/:period', async (req, res) => {
+  const { journalCode, period } = req.params;
+  try {
+    if(journalCode && period){
+      const pageData = await PageService.getPageData(journalCode);
+      const [year, month] = period.split('-');
+      const publicationTime = await PublicationService.getNextPublicationTime();
+      const journalId = await JournalService.getJournalIdByCode(journalCode);
+      const articlesArchives = await JournalService.getArtilcesArchives(journalId);
+      const journalData = await JournalService.getJournalWithLatestIssue(journalId);
+      const currentIssueId = await JournalService.getCurrentIssueIdWithYearAndMonth(year, month);
+      const articlesList = await JournalService.getArticlesList(currentIssueId);
+  
+      // const sections = await SectionService.getThreeSections();
+      // const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
+      // console.log('pageData', pageData, publicationTime, sections, latestFeedbacks, safeHtml);
+      console.log(journalId, articlesArchives, journalData, currentIssueId, articlesList);
+      if (pageData) {
+        res.render('commonPage', { page: pageData, publicationTime, journalData: journalData[0] , articles: articlesList,
+           archives: articlesArchives, isJournalPage: true, isArticlePage: false });
+      } else {
+        res.status(404).send('Page not found');
+      }
+    } else {
+      res.status(400).send('Invalid journal code or period');
+    }
+   
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // Article View Page rendering route
 router.get('/article/:articleId', async (req, res) => {
   const { articleId } = req.params;

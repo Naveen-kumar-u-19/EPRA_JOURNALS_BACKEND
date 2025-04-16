@@ -112,7 +112,7 @@
 }
 
 .article-count {
-    color: #1e3c72;
+    color: #2d6a4f;
     font-size: 0.85em;
     font-weight: 500;
 }
@@ -182,7 +182,7 @@
                 <h3 class="year-title"><%= yearData.year %></h3>
                 <div class="months-grid">
                     <% yearData.months.forEach(month => { %>
-                        <a href="/archive/<%= yearData.year %>/<%= month.month %>" class="month-card">
+                        <a href="/journal/<%= journalData.short_code %>/archives/<%= yearData.year %>-<%= month.month %>" class="month-card">
                             <span class="month-name"><%= month.month %></span>
                             <span class="article-count"><%= month.articles_count %> Articles</span>
                         </a>
