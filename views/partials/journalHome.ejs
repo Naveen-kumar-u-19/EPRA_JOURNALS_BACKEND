@@ -57,6 +57,7 @@
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .articles-grid {
@@ -247,6 +248,7 @@
 
     <div class="articles-section">
         <h2 class="section-title">Current Issue Articles</h2>
+        <% if (articles && articles.length > 0) { %>
         <div class="articles-grid" id="articlesGrid">
             <% articles.forEach(article => { %>
                 <div class="article-card">
@@ -266,6 +268,9 @@
                 </div>
             <% }); %>
         </div>
+        <% } else { %>
+            <p style="text-align: center; font-size: 1.2em; color: #2d6a4f;">No articles available for this Journal / Archives.</p>
+        <% } %>
         <!-- <div class="pagination" id="pagination">
             <button id="prevBtn" disabled>Previous</button>
             <span id="pageInfo">Page <span id="currentPage">1</span> of <span id="totalPages"><%= Math.ceil(articles.length / 6) %></span></span>

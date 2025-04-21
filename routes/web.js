@@ -39,11 +39,12 @@ router.get('/web', (req, res) => {
 // To render Main the pages
 router.get('/pages/:PageCode', async (req, res) => {
   const { PageCode } = req.params;
-  const publicationTime = '2025-03-25T10:30:00Z';
+  let publicationTime = null;
+  let sections = null;
   try {
     var pageData = await PageService.getPageData(PageCode);
-    const publicationTime = await PublicationService.getNextPublicationTime();
-    const sections = await SectionService.getThreeSections();
+    publicationTime = await PublicationService.getNextPublicationTime();
+    sections = await SectionService.getThreeSections();
     const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
     const safeHtml = sanitizeHtml(sections.LATEST_NEWS.content, {
       allowedTags: ['p', 'b', 'i', 'em', 'strong', 'ul', 'ol', 'li', 'br', 'a'],
@@ -60,31 +61,35 @@ router.get('/pages/:PageCode', async (req, res) => {
     //   allowedSchemes: ['http', 'https', 'mailto'],
     // });
     console.log('pageData', pageData, publicationTime, sections, latestFeedbacks, safeHtml);
-    if (pageData) {
+    // if (pageData) {
       res.render('commonPage', { page: pageData, publicationTime, sections, latestFeedbacks, 
         safeHtml, isJournalPage: false, isArticlePage: false });
-    } else {
-      res.status(404).send('Page not found');
-    }
+    // } else {
+      // res.status(404).send('Page not found');
+      // res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections } )
+    // }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    // res.status(500).send('Internal Server Error');
+    res.render('pageNotFound', { publicationTime,  isJournalPage: false, isArticlePage: false, sections  } )
+
   }
 });
 
 //Journal home Page rendering route
 router.get('/journal/:journalCode', async (req, res) => {
   const { journalCode } = req.params;
+  let sections = null, publicationTime = null;
   try {
     var pageData = await PageService.getPageData(journalCode);
-    const publicationTime = await PublicationService.getNextPublicationTime();
+    publicationTime = await PublicationService.getNextPublicationTime();
     const journalId = await JournalService.getJournalIdByCode(journalCode);
     const articlesArchives = await JournalService.getArtilcesArchives(journalId);
     const journalData = await JournalService.getJournalWithLatestIssue(journalId);
     const currentIssueId = await JournalService.getCurrentIssueId(journalId);
     const articlesList = await JournalService.getArticlesList(currentIssueId);
 
-    // const sections = await SectionService.getThreeSections();
+    sections = await SectionService.getThreeSections();
     // const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
     // console.log('pageData', pageData, publicationTime, sections, latestFeedbacks, safeHtml);
     const archives = [
@@ -120,7 +125,8 @@ router.get('/journal/:journalCode', async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    // res.status(500).send('Internal Server Error');
+    res.render('pageNotFound', { publicationTime,  isJournalPage: false, isArticlePage: false, sections  } )
   }
 });
 
@@ -165,7 +171,7 @@ router.get('/article/:articleId', async (req, res) => {
     const publicationTime = await PublicationService.getNextPublicationTime();
     const articleDetails = await JournalService.getOneArticleById(articleId);
     console.log('pageData', articleDetails);
-    if (pageData) {
+    if (pageData ) {
       res.render('commonPage', { page: pageData, article: articleDetails[0], publicationTime, isJournalPage: false, isArticlePage: true });
     } else {
       res.status(404).send('Page not found');
@@ -309,7 +315,7 @@ router.post('/contact', async (req, res) => {
   }
 });
 
-router.get('/journal/full', async (req, res) => {
+router.get('/journalData/full', async (req, res) => {
   try {
     const journals = await JournalService.getAllJournalsFull();
     res.json({ success: true, data: journals });
@@ -319,11 +325,12 @@ router.get('/journal/full', async (req, res) => {
 });
 
 // Short version - Fetch journals with only id, name, imgUrl, and short_code
-router.get('/journal/short', async (req, res) => {
+router.get('/journalData/short', async (req, res) => {
   try {
     const journals = await JournalService.getAllJournalsShort();
     res.json({ success: true, data: journals });
   } catch (error) {
+    console.error('Error fetching journals:', error);
     res.status(500).json({ success: false, message: 'Internal Server Error', error });
   }
 });

@@ -215,64 +215,65 @@
   }
 </style>
 <header>
-  <% publicationTimeISO=publicationTime.toISOString(); %>
-
-    <div class="header-top">
-      <div class="logo">
-        <!-- <img src="./epra_logo_1.png" alt="EPRA Logo"> -->
-        <h1>[Logo] EPRA Trust <span>Publishing</span></h1>
-      </div>
-      <div class="hamburger">☰</div>
-      <div class="countdown-timer">
-        <span>Next Publication In:</span>
-        <span class="timer-label">Days:</span>
-        <span class="timer-value" id="days">00</span>
-        <span class="timer-label">Hours:</span>
-        <span class="timer-value" id="hours">00</span>
-        <span class="timer-label">Minutes:</span>
-        <span class="timer-value" id="minutes">00</span>
-        <span class="timer-label">Seconds:</span>
-        <span class="timer-value" id="seconds">00</span>
-      </div>
-    </div>
-    <nav>
-      <div class="nav-menu">
-        <div class="close-btn">✖</div>
-        <% if (!isJournalPage && !isArticlePage ) { %>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Editorial Board</a></li>
-            <li><a href="#">Info Centre</a></li>
-            <li><a href="#">Publication Fee</a></li>
-            <li><a href="#">Indexing</a></li>
-            <li><a href="#">Review Process</a></li>
-            <li><a href="#">Feedback</a></li>
-            <li><a href="#">Contact Us</a></li>
-          </ul>
-          <% } else { %>
-            <!-- Menu A -->
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Current Issue</a></li>
-              <li><a href="#">Date Schedule</a></li>
-              <li><a href="#">Archives</a></li>
-              <li><a href="#">Editorial Team</a></li>
-              <li><a href="#">Publication Fee</a></li>
-            </ul>
-            <% } %>
-      </div>
-    </nav>
-    <% if (!isJournalPage && !isArticlePage) { %>
-      <div class="news-ticker">
-        <!-- <div id="news-scrolling"> </div> -->
-        <!-- <p id="news-scrolling">News Scrolling: Stay updated with the latest announcements and updates from EPRA
-      Trust Publishing!</p> -->
-        <p id="news-scrolling">
-          <%= sections.NEWS.content %>
-        </p>
-      </div>
+      <% if(publicationTime) { %>
+            <% publicationTimeISO=publicationTime.toISOString(); %>
       <% } %>
+        <div class="header-top">
+          <div class="logo">
+            <img src="../../assets/images/epra_logo.png" alt="EPRA Logo">
+            <h1>[Logo] EPRA Trust <span>Publishing</span></h1>
+          </div>
+          <div class="hamburger">☰</div>
+          <div class="countdown-timer">
+            <span>Next Publication In:</span>
+            <span class="timer-label">Days:</span>
+            <span class="timer-value" id="days">00</span>
+            <span class="timer-label">Hours:</span>
+            <span class="timer-value" id="hours">00</span>
+            <span class="timer-label">Minutes:</span>
+            <span class="timer-value" id="minutes">00</span>
+            <span class="timer-label">Seconds:</span>
+            <span class="timer-value" id="seconds">00</span>
+          </div>
+        </div>
+        <nav>
+          <div class="nav-menu">
+            <div class="close-btn">✖</div>
+            <% if (!isJournalPage && !isArticlePage ) { %>
+              <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Editorial Board</a></li>
+                <li><a href="#">Info Centre</a></li>
+                <li><a href="#">Publication Fee</a></li>
+                <li><a href="#">Indexing</a></li>
+                <li><a href="#">Review Process</a></li>
+                <li><a href="#">Feedback</a></li>
+                <li><a href="#">Contact Us</a></li>
+              </ul>
+              <% } else { %>
+                <!-- Menu A -->
+                <ul>
+                  <li><a href="#">Home</a></li>
+                  <li><a href="#">Current Issue</a></li>
+                  <li><a href="#">Date Schedule</a></li>
+                  <li><a href="#">Archives</a></li>
+                  <li><a href="#">Editorial Team</a></li>
+                  <li><a href="#">Publication Fee</a></li>
+                </ul>
+                <% } %>
+          </div>
+        </nav>
+        <% if (!isJournalPage && !isArticlePage && sections && sections.NEWS && sections.NEWS.content) { %>
+          <div class="news-ticker">
+            <!-- <div id="news-scrolling"> </div> -->
+            <!-- <p id="news-scrolling">News Scrolling: Stay updated with the latest announcements and updates from EPRA
+      Trust Publishing!</p> -->
+            <p id="news-scrolling">
+              <%= sections.NEWS.content %>
+            </p>
+          </div>
+          <% } %>
 </header>
 
 <script>
@@ -281,7 +282,7 @@
   const closeBtn = document.querySelector('.close-btn');
 
   var newsList = document.getElementById('news-scrolling');
-  if(newsList) {
+  if (newsList) {
     newsList.innerHTML = newsList.textContent;
   }
 

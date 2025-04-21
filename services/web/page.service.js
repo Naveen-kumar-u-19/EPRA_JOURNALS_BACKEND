@@ -10,9 +10,9 @@ async function getPageData(PageCode) {
         }
       );
       // console.log(result);
-      if(!result) {
-        throw { status: 404, message: 'Section not available' };
-      }
+      // if(!result) {
+      //   throw { status: 404, message: 'Section not available' };
+      // }
       return result; // Return the first row (single page)
     } catch (error) {
       console.error('Error fetching page data:', error);

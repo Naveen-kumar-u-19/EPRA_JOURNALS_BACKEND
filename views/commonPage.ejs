@@ -4,140 +4,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= page.pageTitle %>
-    </title>
-    <meta name="description" content="<%= page.metaDescription %>">
-    <meta name="keywords" content="<%= page.metaKeywords %>">
+    <% if (page && page.pageTitle ) { %>
 
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="<%= page.ogTitle || page.pageTitle %>">
-    <meta property="og:description" content="<%= page.ogDescription || page.metaDescription %>">
-    <meta property="og:image" content="<%= page.ogImage %>">
-    <meta property="og:url" content="<%= page.ogUrl %>">
-    <meta property="og:type" content="<%= page.ogType || 'website' %>">
+        <title>
+            <%= page.pageTitle %>
+        </title>
+        <meta name="description" content="<%= page.metaDescription %>">
+        <meta name="keywords" content="<%= page.metaKeywords %>">
 
-    <link rel="stylesheet" href="https://eprajournals.com//template/ecom/assets/css/app.min.css" />
-    <link rel="stylesheet" href="https://eprajournals.com//template/ecom/assets/css/vendor.min.css" />
+        <!-- Open Graph Tags -->
+        <meta property="og:title" content="<%= page.ogTitle || page.pageTitle %>">
+        <meta property="og:description" content="<%= page.ogDescription || page.metaDescription %>">
+        <meta property="og:image" content="<%= page.ogImage %>">
+        <meta property="og:url" content="<%= page.ogUrl %>">
+        <meta property="og:type" content="<%= page.ogType || 'website' %>">
+        <% } %>
+            <!-- <link rel="stylesheet" href="https://eprajournals.com//template/ecom/assets/css/app.min.css" />
+      <link rel="stylesheet" href="https://eprajournals.com//template/ecom/assets/css/vendor.min.css" />
     <link rel="stylesheet" href="https://eprajournals.com//template/ecom/assets/theme.css" />
     <link rel="stylesheet" href="https://eprajournals.com//template/ecom/assets/icofont/icofont.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit/build/jodit.min.css"> -->
+     -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+            <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit/build/jodit.min.css"> -->
 
-    <% if (page.headerScripts) { %>
-        <%= page.headerScripts %>
-            <% } %>
+            <% if (page && page.headerScripts) { %>
+                <%= page.headerScripts %>
+                    <% } %>
 
-                <style>
-                    .main-container {
-                        display: flex;
-                        flex-direction: row;
-                        /* justify-content: space-between; */
-                        justify-content: center;
-                        padding: 20px;
-                    }
+                        <style>
+                            .main-container {
+                                display: flex;
+                                flex-direction: row;
+                                /* justify-content: space-between; */
+                                justify-content: center;
+                                padding: 20px;
+                            }
 
-                    .main-content {
-                        width: 65%;
-                        float: left;
-                        padding: 15px;
-                        background-color: #f9f9f9;
-                        border-right: 1px solid #ddd;
-                    }
+                            .main-content {
+                                width: 65%;
+                                float: left;
+                                padding: 15px;
+                                background-color: #f9f9f9;
+                                border-right: 1px solid #ddd;
+                            }
 
-                    .main-content h1 {
-                        font-size: 18px;
-                        color: #333;
-                        margin-bottom: 15px;
-                        border-bottom: 1px solid #d9dddb;
-                        padding-bottom: 5px;
-                    }
+                            .main-content h1 {
+                                font-size: 18px;
+                                color: #333;
+                                margin-bottom: 15px;
+                                border-bottom: 1px solid #d9dddb;
+                                padding-bottom: 5px;
+                            }
 
-                    .right-sidebar {
-                        width: 35%;
-                        float: right;
-                        padding: 15px;
-                        background-color: #f9f9f9;
-                        border-left: 1px solid #ddd;
-                    }
+                            .right-sidebar {
+                                width: 35%;
+                                float: right;
+                                padding: 15px;
+                                background-color: #f9f9f9;
+                                border-left: 1px solid #ddd;
+                            }
 
-                    .archive-width {
-                        width: 30%;
-                    }
+                            .archive-width {
+                                width: 30%;
+                            }
 
-                    .content-width {
-                        width: 70%;
-                    }
+                            .content-width {
+                                width: 70%;
+                            }
 
-                    @media (max-width: 768px) {
-                        .main-container {
-                            flex-direction: column;
-                            width: 100%;
-                        }
+                            @media (max-width: 768px) {
+                                .main-container {
+                                    flex-direction: column;
+                                    width: 100%;
+                                }
 
-                        .main-content,
-                        .right-sidebar {
-                            width: 100%;
-                            float: none;
-                            border: none;
-                        }
+                                .main-content,
+                                .right-sidebar {
+                                    width: 100%;
+                                    float: none;
+                                    border: none;
+                                }
 
-                        .main-content {
-                            padding: 10px;
-                            margin-bottom: 20px;
-                        }
+                                .main-content {
+                                    padding: 10px;
+                                    margin-bottom: 20px;
+                                }
 
-                        .archive-width {
-                            width: 100%;
-                        }
+                                .archive-width {
+                                    width: 100%;
+                                }
 
-                        .content-width {
-                            width: 100%;
-                        }
-                    }
-                </style>
+                                .content-width {
+                                    width: 100%;
+                                }
+                            }
+
+                            /* Common Style for InnerHtml */
+
+
+                            h1,
+                            h2,
+                            h3,
+                            h4,
+                            h5,
+                            h6 {
+                                margin: 1rem 0 0.5rem;
+                                font-weight: bold;
+                                line-height: 1.3;
+                            }
+
+                            h1 {
+                                font-size: 2rem;
+                            }
+
+                            h2 {
+                                font-size: 1.75rem;
+                            }
+
+                            h3 {
+                                font-size: 1.5rem;
+                            }
+
+                            h4 {
+                                font-size: 1.25rem;
+                            }
+
+                            h5 {
+                                font-size: 1.1rem;
+                            }
+
+                            h6 {
+                                font-size: 1rem;
+                            }
+
+                            p {
+                                margin: 0 0 1rem;
+                            }
+
+                            ul,
+                            ol {
+                                padding-left: 20px;
+                                margin-bottom: 1rem;
+                            }
+
+                            li {
+                                margin-bottom: 0.5rem;
+                            }
+
+                            a {
+                                color: #51a3fa;
+                                text-decoration: underline;
+                            }
+
+                            a:hover {
+                                color: #1e6fbe;
+                            }
+
+                            img {
+                                max-width: 100%;
+                                height: auto;
+                                display: block;
+                                margin: 1rem 0;
+                            }
+
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin: 1rem 0;
+                            }
+
+                            th,
+                            td {
+                                border: 1px solid #ccc;
+                                padding: 8px;
+                                text-align: left;
+                            }
+
+                            blockquote {
+                                border-left: 4px solid #51a3fa;
+                                padding: 0.5rem 1rem;
+                                margin: 1rem 0;
+                                background: #f0faff;
+                                color: #555;
+                            }
+
+                            strong {
+                                font-weight: bold;
+                            }
+
+                            em {
+                                font-style: italic;
+                            }
+
+                            code {
+                                background: #f4f4f4;
+                                padding: 2px 6px;
+                                font-family: monospace;
+                                border-radius: 4px;
+                            }
+
+                            hr {
+                                border: none;
+                                border-top: 1px solid #ddd;
+                                margin: 2rem 0;
+                            }
+
+                            input[type="button"] {
+                                padding: 5px;
+                            }
+                        </style>
 </head>
 
 <body>
     <%- include('partials/header', { publicationTime }) %>
         <!-- <main> -->
-            <div class="main-container">
-                <% if (!isJournalPage && !isArticlePage) { %>
+        <div class="main-container">
+            <% if (!isJournalPage && !isArticlePage) { %>
+                <% if (page && page.content) { %>
                     <div class="main-content">
                         <h1>
                             <%= page.pageTitle %>
                         </h1>
                         <%- page.content %>
                     </div>
-
-                    <div class="right-sidebar">
-                        <%- include('partials/rightSideBar', { sections } ) %>
-                    </div>
-                    <% } else if (isJournalPage && !isArticlePage) { %>
-                        <div class="main-content  content-width">
-                            <%- include('partials/journalHome' ) %>
-
-                                Journals
+                    <% } else { %> %>
+                        <div class="main-content">
+                            <h1>Page Not Found</h1>
+                            <p>The page you are looking for does not exist.</p>
+                            <a href="/">Go to Home</a>
+                            <%- include('./pageNotFound') %>
                         </div>
+                        <% }%> %>
 
-                        <div class="right-sidebar archive-width">
-                            <%- include('partials/archives', { archives } ) %>
 
-                        </div>
+                            <div class="right-sidebar">
+                                <%- include('partials/rightSideBar', { sections } ) %>
+                            </div>
+                            <% } else if (isJournalPage && !isArticlePage) { %>
+                                <div class="main-content  content-width">
+                                    <%- include('partials/journalHome' ) %>
 
-                    <% } else if (isArticlePage) { %> %>
-                        <div>
-                            <%- include('partials/articleView' ) %>
+                                        Journals
+                                </div>
 
-                        </div>
-                    <% }%> %>
+                                <div class="right-sidebar archive-width">
+                                    <%- include('partials/archives', { archives } ) %>
 
-            </div>
+                                </div>
+
+                                <% } else if (isArticlePage) { %> %>
+                                    <div>
+                                        <%- include('partials/articleView' ) %>
+
+                                    </div>
+                                    <% }%> %>
+
+        </div>
         <!-- </main> -->
         <footer>
             <%- include('partials/footer') %>
         </footer>
-        <% if (page.footerScripts) { %>
+        <% if (page && page.footerScripts) { %>
             <%= page.footerScripts %>
                 <% } %>
 </body>

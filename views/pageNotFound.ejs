@@ -1,0 +1,58 @@
+<style>
+  .not-found-container {
+    max-width: 500px;
+    padding: 2rem;
+    background: rgb(92 177 94);
+    ;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    font-weight: bold;
+  }
+
+  .not-found-heading {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .not-found-text {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .nagivate-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff;
+    color: #f86e64;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .nagivate-btn:hover {
+    background-color: #f86e64;
+    color: #fff;
+  }
+
+  @media (max-width: 600px) {
+    not-found-heading {
+      font-size: 3rem;
+    }
+
+    .not-found-text {
+      font-size: 1rem;
+    }
+
+    .container {
+      margin: 1rem;
+    }
+  }
+</style>
+
+<div class="not-found-container">
+  <h1 class="not-found-heading">404</h1>
+  <p class="not-found-text">Oops! The page you're looking for doesn't exist.</p>
+  <a href="/" class="nagivate-btn">Go Back Home</a>
+</div>

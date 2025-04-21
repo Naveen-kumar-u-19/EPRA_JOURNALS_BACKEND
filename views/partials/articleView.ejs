@@ -34,7 +34,14 @@
         letter-spacing: 0.5px;
         font-weight: 700;
     }
-
+    
+    .article-not-found-header {
+        font-size: 1.2em;
+        color: #ff6f61 !important;
+        /* margin-top: 20px; */
+        text-align: center;
+        
+    }
     .header-decor {
         position: absolute;
         bottom: -10px;
@@ -244,6 +251,22 @@
         /* font-weight: 600; */
     }
 
+    .nagivate-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff;
+    color: #f86e64;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .nagivate-btn:hover {
+    background-color: #f86e64;
+    color: #fff;
+  }
+
     /* Animations */
     @keyframes fadeIn {
         from {
@@ -271,7 +294,7 @@
         }
 
         .journal-title {
-            font-size: 1.8em;
+            font-size: 1.5em;
         }
 
         .article-card {
@@ -287,8 +310,10 @@
 </style>
 
 <div class="single-article-container">
+    <% if (article) { %>
+
     <header class="article-header">
-        <h1 class="journal-title">
+        <h1 class="journal-title ">
             <%= article.paper_title %>
         </h1>
         <div class="header-decor" style="background: linear-gradient(90deg, #2d6a4f, #3a8b66);"></div>
@@ -371,4 +396,17 @@
             </div>
         </aside>
     </div>
+    <% } else { %>
+        <header class="article-header">
+        <h1 class="journal-title article-not-found-header">
+        Article not found.</h1>
+        <p>
+            Invalid URL or the article may have been removed.
+            Please check the URL or contact the journal administrator for assistance.
+        </p>
+  <a href="/" class="nagivate-btn">Go Back Home</a>
+
+        </header>
+    <% } %>
+
 </div>
