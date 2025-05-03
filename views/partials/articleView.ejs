@@ -1,12 +1,12 @@
 <style>
-    body {
+    /* body {
         font-family: 'Georgia', serif;
         background: #f0f4f3;
         color: #333;
         margin: 0;
         padding: 0;
         line-height: 1.6;
-    }
+    } */
 
     .single-article-container {
         max-width: 1200px;
@@ -34,14 +34,15 @@
         letter-spacing: 0.5px;
         font-weight: 700;
     }
-    
+
     .article-not-found-header {
         font-size: 1.2em;
         color: #ff6f61 !important;
         /* margin-top: 20px; */
         text-align: center;
-        
+
     }
+
     .header-decor {
         position: absolute;
         bottom: -10px;
@@ -226,6 +227,11 @@
         border-radius: 25px;
         transition: all 0.3s ease;
         font-weight: 600;
+        font-size: 14px;
+    }
+
+    .classic-button {
+        width: 30% !important;
     }
 
     .submit-button:hover {
@@ -252,20 +258,20 @@
     }
 
     .nagivate-btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: #fff;
-    color: #f86e64;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: #fff;
+        color: #f86e64;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
 
-  .nagivate-btn:hover {
-    background-color: #f86e64;
-    color: #fff;
-  }
+    .nagivate-btn:hover {
+        background-color: #f86e64;
+        color: #fff;
+    }
 
     /* Animations */
     @keyframes fadeIn {
@@ -306,107 +312,110 @@
             text-align: center;
             margin-bottom: 10px;
         }
+
+        .classic-button {
+            width: 100% !important;
+        }
     }
 </style>
 
 <div class="single-article-container">
     <% if (article) { %>
 
-    <header class="article-header">
-        <h1 class="journal-title ">
-            <%= article.paper_title %>
-        </h1>
-        <div class="header-decor" style="background: linear-gradient(90deg, #2d6a4f, #3a8b66);"></div>
-    </header>
-
-    <div class="article-wrapper">
-        <div class="article-card">
-            <div class="article-header-section">
-                <h2 class="article-title">Authors: <%= article.authors_all %>
-                </h2>
-                <p class="publish-date">Published on: <%= new Date(article.published_on).toLocaleDateString() %>
-                </p>
-            </div>
-            <div class="article-content-section">
-                <h3 class="section-heading">Abstract</h3>
-                <p class="abstract-text">
-                    <%= article.abstract %>
-                </p>
-
-                <% if (article.keywords) { %>
-                    <h3 class="section-heading">Keywords</h3>
-                    <p class="keywords-text">
-                        <%= article.keywords %>
-                    </p>
-                    <% } %>
-
-                        <% if (article.doi) { %>
-                            <h3 class="section-heading">DOI</h3>
-                            <p class="keywords-text">
-                                <a href="<%= article.doi %>" target="_blank" class="doi-link">View DOI - (<%=
-                                        article.doi %>)<i class="fas fa-link"></i></a>
-                            </p>
-                            <% } %>
-            </div>
-            <div class="article-actions">
-                <a href="<%= article.doc_url %>" target="_blank" class="action-button">View PDF <i
-                        class="fas fa-file-pdf"></i></a>
-                <a href="<%= article.url %>" target="_blank" class="action-button">View Abstract <i
-                        class="fas fa-book"></i></a>
-                <% if (article.doi) { %>
-                    <a href="<%= article.doi %>" target="_blank" class="action-button">View DOI <i
-                            class="fas fa-link"></i></a>
-                    <% } %>
-            </div>
-        </div>
-
-        <aside class="article-sidebar">
-            <div class="sidebar-card">
-                <h4 class="sidebar-title">Issue Details</h4>
-                <ul class="details-list">
-                    <li><strong>Journal Name:</strong>
-                        <%= article.journal_name %>
-                    </li>
-                    <li><strong>Volume:</strong>
-                        <%= article.volume %>
-                    </li>
-                    <li><strong>Issue:</strong>
-                        <%= article.issue %>
-                    </li>
-                    <li><strong>Month:</strong>
-                        <%= article.month %>
-                            <%= article.year %>
-                    </li>
-                    <li><strong>DOI:</strong>
-                        <%= article.doi || 'Not Available' %>
-                    </li>
-                </ul>
-                <div class="stats-box">
-                    <p class="chip"><i class="fas fa-download"></i> <span>
-                            <%= article.download_count %>
-                        </span> Downloads</p>
-                    <p class="chip"><i class="fas fa-eye"></i> <span>
-                            <%= article.views_count %>
-                        </span> Views</p>
-                </div>
-                <!-- <a href="#" class="submit-button">Submit Your Article</a> -->
-                <a href="<%= article.doc_url %>" target="_blank" class="submit-button">View PDF <i
-                        class="fas fa-file-pdf"></i></a>
-
-            </div>
-        </aside>
-    </div>
-    <% } else { %>
         <header class="article-header">
-        <h1 class="journal-title article-not-found-header">
-        Article not found.</h1>
-        <p>
-            Invalid URL or the article may have been removed.
-            Please check the URL or contact the journal administrator for assistance.
-        </p>
-  <a href="/" class="nagivate-btn">Go Back Home</a>
-
+            <h1 class="journal-title ">
+                <%= article.paper_title %>
+            </h1>
+            <div class="header-decor" style="background: linear-gradient(90deg, #2d6a4f, #3a8b66);"></div>
         </header>
-    <% } %>
+
+        <div class="article-wrapper">
+            <div class="article-card">
+                <div class="article-header-section">
+                    <h2 class="article-title">Authors: <%= article.authors_all %>
+                    </h2>
+                    <p class="publish-date">Published on: <%= new Date(article.published_on).toLocaleDateString() %>
+                    </p>
+                </div>
+                <div class="article-content-section">
+                    <h3 class="section-heading">Abstract</h3>
+                    <p class="abstract-text">
+                        <%= article.abstract %>
+                    </p>
+
+                    <% if (article.keywords) { %>
+                        <h3 class="section-heading">Keywords</h3>
+                        <p class="keywords-text">
+                            <%= article.keywords %>
+                        </p>
+                        <% } %>
+
+                            <% if (article.doi) { %>
+                                <h3 class="section-heading">DOI</h3>
+                                <p class="keywords-text">
+                                    <a href="<%= article.doi %>" target="_blank" class="doi-link">View DOI - (<%=
+                                            article.doi %>)<i class="fas fa-link"></i></a>
+                                </p>
+                                <% } %>
+                </div>
+                <div class="article-actions">
+                    <a href="<%= article.doc_url %>" target="_blank" class="submit-button classic-button">View PDF <i
+                            class="fas fa-file-pdf"></i></a>
+
+                    <% if (article.doi) { %>
+                        <a href="<%= article.doi %>" target="_blank" class="submit-button classic-button">View DOI <i
+                                class="fas fa-link"></i></a>
+                        <% } %>
+                </div>
+            </div>
+
+            <aside class="article-sidebar">
+                <div class="sidebar-card">
+                    <h4 class="sidebar-title">Issue Details</h4>
+                    <ul class="details-list">
+                        <li><strong>Journal Name:</strong>
+                            <%= article.journal_name %>
+                        </li>
+                        <li><strong>Volume:</strong>
+                            <%= article.volume %>
+                        </li>
+                        <li><strong>Issue:</strong>
+                            <%= article.issue %>
+                        </li>
+                        <li><strong>Month:</strong>
+                            <%= article.month %>
+                                <%= article.year %>
+                        </li>
+                        <li><strong>DOI:</strong>
+                            <%= article.doi || 'Not Available' %>
+                        </li>
+                    </ul>
+                    <div class="stats-box">
+                        <p class="chip"><i class="fas fa-download"></i> <span>
+                                <%= article.download_count %>
+                            </span> Downloads</p>
+                        <p class="chip"><i class="fas fa-eye"></i> <span>
+                                <%= article.views_count %>
+                            </span> Views</p>
+                    </div>
+                    <!-- <a href="#" class="submit-button">Submit Your Article</a> -->
+                    <a href="<%= article.doc_url %>" target="_blank" class="submit-button">View PDF <i
+                            class="fas fa-file-pdf"></i></a>
+
+                </div>
+            </aside>
+        </div>
+        <% } else { %>
+            <header class="article-header">
+                <h1 class="journal-title article-not-found-header">
+                    Article not found.</h1>
+                <p>
+                    Invalid URL or the article may have been removed.
+                    Please check the URL or contact the journal administrator for assistance.
+                </p>
+                <a href="/" class="nagivate-btn">Go Back Home</a>
+
+            </header>
+            <% } %>
 
 </div>

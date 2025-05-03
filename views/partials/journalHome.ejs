@@ -259,7 +259,7 @@
                     <div class="article-content">
                         <p class="article-abstract"><%= article.abstract.substring(0, 250) %>...</p>
                         <a href="<%= article.doc_url %>" target="_blank" class="view-pdf">View PDF</a>
-                        <a href="<%= article.url %>" target="_blank" class="view-abstract">View Article</a>
+                        <a href="/article/<%= article.id %>" target="_blank" class="view-abstract">View Article</a>
                     </div>
                     <div class="article-stats">
                         <span><i class="fas fa-download"></i> <%= article.download_count %> Downloads</span>
