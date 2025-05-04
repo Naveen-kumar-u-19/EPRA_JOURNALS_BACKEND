@@ -179,7 +179,7 @@ const uploadJournalImage = async (req, res) => {
       });
     }
 
-    const uploadDetail = await uploadFile(req, 'article'); //Upload Image
+    const uploadDetail = await uploadFile(req, 'journal'); //Upload Image
     if (uploadDetail?.key) {
       console.log('upload Key', uploadDetail.key);
       let updateImage;
