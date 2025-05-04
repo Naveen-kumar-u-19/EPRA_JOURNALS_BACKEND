@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { sequelize } = require('../models');
-
+const { uploadFile, upload } = require('./s3.controller');
 
 /**
  * Function used to get all journal details for list page
@@ -55,7 +55,7 @@ const createJournal = async (req, res) => {
       req.body.status = JSON.parse(req.body.status);
     }
     const [createJournal] = await sequelize.query(
-      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`, `img_url`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :shortCode, :imgUrl)',
+      'INSERT INTO `journal` (`name`, `category`, `eissn`, `pissn`, `sjif`, `isi`, `status`, `short_code`) VALUES (:name, :category, :eissn, :pissn, :sjif, :isi, :status, :shortCode)',
       {
         replacements: req.body,
         type: sequelize.QueryTypes.INSERT,
@@ -90,7 +90,7 @@ const updateJournal = async (req, res) => {
     req.body['updatedAt'] = new Date();
 
     const [updateJournal] = await sequelize.query(
-      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :shortCode, `updated_at`= :updatedAt, `img_url` = :imgUrl WHERE `id` = :id',
+      'UPDATE `journal` SET `name` = :name, `category` = :category, `eissn` = :eissn, `pissn` = :pissn, `sjif` = :sjif, `isi` = :isi, `status` = :status, `short_code` = :shortCode, `updated_at`= :updatedAt WHERE `id` = :id',
       {
         replacements: req.body,
       }
@@ -165,10 +165,98 @@ const getAllJournalForFilter = async (req, res) => {
   }
 }
 
+/**
+ * Function used to upload journal image
+ */
+const uploadJournalImage = async (req, res) => {
+  try {
+    const journalId = req.body?.id;
+    const updateCode = req.body?.code;
+    if (!journalId || !updateCode) {
+      res.status(400).json({
+        success: false,
+        message: 'Journal id or Update code is missing',
+      });
+    }
+
+    const uploadDetail = await uploadFile(req, 'article'); //Upload Image
+    if (uploadDetail?.key) {
+      console.log('upload Key', uploadDetail.key);
+      let updateImage;
+      switch (updateCode) {
+
+        case 'NORMAL_IMAGE': {
+          [updateImage] = await sequelize.query(
+            `UPDATE journal SET img_url =:image_url WHERE id=:id`, {
+            replacements: {
+              id: journalId,
+              image_url: uploadDetail?.key
+            }
+          })
+          break;
+        }
+
+        case 'TOP_IMAGE': {
+          [updateImage] = await sequelize.query(
+            `UPDATE journal SET top_img_url =:image_url WHERE id=:id`, {
+            replacements: {
+              id: journalId,
+              image_url: uploadDetail?.key
+            }
+          })
+          break;
+        }
+
+        case 'SIDE_IMAGE': {
+          [updateImage] = await sequelize.query(
+            `UPDATE journal SET side_img_url =:image_url WHERE id=:id`, {
+            replacements: {
+              id: journalId,
+              image_url: uploadDetail?.key
+            }
+          })
+          break;
+        }
+
+        default: {
+          res.status(400).json({
+            success: false,
+            message: 'Invalid code.',
+          });
+          break;
+        }
+      }
+
+      if (updateImage) {
+        res.status(200).json({
+          success: true,
+          result: uploadDetail?.key,
+          message: 'Image updated successfully.',
+        });
+      }
+
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to upload image.',
+      });
+    }
+
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to upload image.',
+    });
+  }
+}
 
 router.get('', getAllJournals);
 router.post('/', createJournal);
 router.put('/:id', updateJournal);
 router.delete('/:id', deleteJournal);
 router.get('/filter', getAllJournalForFilter);
+router.post('/upload', upload.single("file"), uploadJournalImage);
 module.exports = router;

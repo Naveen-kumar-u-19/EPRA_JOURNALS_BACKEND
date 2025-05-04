@@ -14,7 +14,6 @@ module.exports = (sequelize) => {
     },
     imgUrl: {
       type: DataTypes.STRING(255),
-      allowNull: false
     },
     category: {
       type: DataTypes.ENUM('ONLINE', 'PRINT', 'BOTH'),
@@ -47,6 +46,12 @@ module.exports = (sequelize) => {
     isDeleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    topImgUrl: {
+      type: DataTypes.STRING(255)
+    },
+    sideImgUrl: {
+      type: DataTypes.STRING(255)
     },
     createdAt: {
       type: DataTypes.DATE,
