@@ -151,7 +151,7 @@ const getArticleDetails = async (req, res) => {
 
     // Get the overall count of article list with paper detail
     const [articleDetails] = await sequelize.query(
-      `SELECT article.id as article_id, article.doi, article.authors_all , article.doc_url, article.google_search_link, article.google_scholar_link, article.article_order, article.published_on, article.abstract, article.keywords, paper.*, issue_period.id as issue_id, issue_period.month as issue_month, issue_period.year as issue_year, issue_period.articles_count as issue_article_count FROM article 
+      `SELECT article.id as article_id, article.doi, article.authors_all , article.doc_url, article.google_search_link, article.google_scholar_link, article.article_order, article.published_on, article.abstract, article.keywords, paper.*, issue_period.id as issue_id, issue_period.month as issue_month, issue_period.year as issue_year, issue_period.articles_count as issue_article_count, issue_period.volume as issue_volume, issue_period.issue as issue_issue FROM article 
           INNER JOIN paper ON article.paper_id = paper.id
           INNER JOIN issue_period ON article.issue_id = issue_period.id
           WHERE article.is_deleted= false AND paper.is_deleted = false AND issue_period.is_deleted = false AND (paper.paper_title LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY article_id DESC LIMIT :limit OFFSET :offset`, {

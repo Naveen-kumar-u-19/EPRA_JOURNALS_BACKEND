@@ -19,7 +19,7 @@ const getAuthorDetail = async (req, res) => {
     );
     // Get the overall count of author list
     const [authorDetail] = await sequelize.query(
-      `SELECT * FROM author 
+      `SELECT paper.*, author.* FROM author 
       INNER JOIN paper ON paper.id = author.paper_id
           WHERE paper.is_deleted = false and author.is_deleted = false and (author.author_name LIKE :searchText OR paper.paper_index LIKE :searchText) ORDER BY author.id DESC LIMIT :limit OFFSET :offset`,
       {
@@ -49,5 +49,42 @@ const getAuthorDetail = async (req, res) => {
   }
 }
 
+/**
+ * Function used to update author detail
+ */
+const updateAuthorDetail = async (req, res) => {
+  try {
+    const id = req.body?.id;
+    if (!id) {
+      res.status(400).json({
+        success: false,
+        message: 'Update id is missing.',
+      });
+    }
+
+    const [updateAuthor] = await sequelize.query(
+      'UPDATE `author` SET `author_name` = :author_name, `designation` = :designation, `dept` = :dept, `college_university` = :college_university, `institution_place` = :institution_place, `city` = :city, `country` = :country, `state` = :state, `email`= :email, `mobile`= :mobile WHERE `id` = :id',
+      {
+        replacements: req.body,
+      }
+    );
+
+    if (updateAuthor) {
+      res.status(200).json({
+        success: true,
+        message: 'Author detail updated successfully.',
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to update author detail.',
+    });
+  }
+}
+
 router.get('', getAuthorDetail);
+router.post('', updateAuthorDetail);
 module.exports = router;
