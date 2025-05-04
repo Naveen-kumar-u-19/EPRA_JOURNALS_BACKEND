@@ -16,9 +16,12 @@ require('./middleware/passport');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(express.static('public'));
+
 // To render EJS files from view folder
 app.set('view engine', 'ejs');
 app.set('views', './views');
+
 
 
 

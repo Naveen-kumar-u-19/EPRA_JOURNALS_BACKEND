@@ -1,10 +1,21 @@
 <style>
-  /* Header */
-  header {
+  /* header {
     background-color: #a8e6cf;
-    padding: 15px 20px;
+    padding: 10px 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
+  }
+
+  header li {
+    margin-bottom: 0rem;
+  }
+
+  .mobile-view {
+    display: none !important;
+  }
+
+  .web-view {
+    display: flex !important;
   }
 
   .header-top {
@@ -20,8 +31,9 @@
   }
 
   .logo img {
-    width: 40px;
+    width: 540px;
     margin-right: 10px;
+    position: absolute;
   }
 
   .logo h1 {
@@ -52,18 +64,59 @@
 
   .countdown-timer .timer-label {
     font-size: 12px;
-    color: #2d6a4f;
+    color: white;
     margin-right: 2px;
   }
 
   .countdown-timer .timer-value {
     font-size: 14px;
-    color: #ff6f61;
+    color: #2d6a4f;
+    ;
     font-weight: 600;
     font-family: 'Courier New', Courier, monospace;
     display: inline-block;
     width: 24px;
     text-align: center;
+    padding: 3px 4px;
+    border-radius: 3px;
+    background: white;
+  }
+
+  .timer-box {
+    border: 1px solid;
+    padding: 2px;
+    border-radius: 5px;
+    background: #2d6a4f;
+    text-align: center;
+  }
+
+  .header-submit-button {
+    margin-top: -14px;
+    text-align: center;
+  }
+
+  .header-submit-button a {
+    padding: 3px 15px;
+    background-color: #2d6a4f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+
+  .header-submit-button a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    border: 1px solid #2d6a4f;
+    color: #2d6a4f;
+  }
+
+  .news-tag {
+    background: #f86e64;
+    padding: 10px;
+    margin-left: -10px;
+    font-weight: 600;
   }
 
   .nav-menu {
@@ -71,15 +124,13 @@
     border-radius: 3px;
     padding: 10px 0;
     display: flex;
-    /* justify-content: center; */
+    padding-left: 6px
   }
 
   .nav-menu ul {
     list-style: none;
     display: flex;
-    gap: 20px;
-    padding-left: 5px;
-    margin-bottom: 2px;
+    gap: 10px;
   }
 
   .nav-menu ul li a {
@@ -91,7 +142,12 @@
   }
 
   .nav-menu ul li a:hover {
-    color: #ff6f61;
+    color: #f86e64;
+  }
+
+  .menu-list {
+    border-right: 1px solid white;
+    padding-right: 10px;
   }
 
   .hamburger {
@@ -125,16 +181,11 @@
 
   .news-ticker p {
     display: inline-block;
-    animation: scroll 30s linear infinite;
-  }
-
-  .news-scrolling:hover {
-    animation-play-state: paused;
   }
 
   @keyframes scroll {
     0% {
-      transform: translateX(100%);
+      transform: translateX(50%);
     }
 
     100% {
@@ -142,10 +193,9 @@
     }
   }
 
-  /* Mobile Responsiveness */
+
   @media (max-width: 768px) {
 
-    /* Header */
     .header-top {
       flex-wrap: wrap;
       gap: 10px;
@@ -212,19 +262,21 @@
     }
 
 
-  }
+  } */
 </style>
 <header>
-      <% if(publicationTime) { %>
-            <% publicationTimeISO=publicationTime.toISOString(); %>
+  <% if(publicationTime) { %>
+    <% publicationTimeISO=publicationTime.toISOString(); %>
       <% } %>
         <div class="header-top">
           <div class="logo">
-            <img src="../../assets/images/epra_logo.png" alt="EPRA Logo">
-            <h1>[Logo] EPRA Trust <span>Publishing</span></h1>
+            <!-- <img src="../../assets/images/epra_logo.png" alt="EPRA Logo"> -->
+            <img src="http://192.168.29.74:8080/epra_logo.png" alt="EPRA Logo">
+            
+            <!-- <h1>[Logo] EPRA Trust <span>Publishing</span></h1> -->
           </div>
           <div class="hamburger">☰</div>
-          <div class="countdown-timer">
+          <!-- <div class="countdown-timer">
             <span>Next Publication In:</span>
             <span class="timer-label">Days:</span>
             <span class="timer-value" id="days">00</span>
@@ -234,6 +286,37 @@
             <span class="timer-value" id="minutes">00</span>
             <span class="timer-label">Seconds:</span>
             <span class="timer-value" id="seconds">00</span>
+          </div> -->
+          <div>
+            <div class="countdown-timer">
+              <span style="text-align: center;">Next Publication In:</span>
+              <div class="timer-box">
+                <span class="timer-label">Days:</span>
+                <span class="timer-value" id="days">00</span>
+              </div>
+              <div class="timer-box">
+                <span class="timer-label">Hours:</span>
+                <span class="timer-value" id="hours">00</span>
+              </div>
+              <div class="timer-box">
+                <span class="timer-label">Minutes:</span>
+                <span class="timer-value" id="minutes">00</span>
+              </div>
+              <div class="timer-box">
+                <span class="timer-label">Seconds:</span>
+                <span class="timer-value" id="seconds">00</span>
+              </div>
+
+            </div>
+            <div class="header-submit-button">
+              <br>
+              <!-- <button href="./paperSubmission.html">Submit Your Paper</button> -->
+              <a href="./paperSubmission.html">
+                Submit Your Paper
+                <i class="fa fa-external-link-alt"></i>
+              </a>
+
+            </div>
           </div>
         </div>
         <nav>
@@ -241,40 +324,48 @@
             <div class="close-btn">✖</div>
             <% if (!isJournalPage && !isArticlePage ) { %>
               <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Editorial Board</a></li>
-                <li><a href="#">Info Centre</a></li>
-                <li><a href="#">Publication Fee</a></li>
-                <li><a href="#">Indexing</a></li>
-                <li><a href="#">Review Process</a></li>
-                <li><a href="#">Feedback</a></li>
-                <li><a href="#">Contact Us</a></li>
+                <li class="menu-list"><a href="#">Home</a></li>
+                <li class="menu-list"><a href="#">About Us</a></li>
+                <li class="menu-list"><a href="#">Editorial Board</a></li>
+                <li class="menu-list"><a href="#">Info Centre</a></li>
+                <li class="menu-list"><a href="#">Publication Fee</a></li>
+                <li class="menu-list"><a href="#">Indexing</a></li>
+                <li class="menu-list"><a href="#">Review Process</a></li>
+                <li class="menu-list"><a href="#">Feedback</a></li>
+                <li class="menu-list"><a href="#">Contact Us</a></li>
               </ul>
               <% } else { %>
-                <!-- Menu A -->
                 <ul>
-                  <li><a href="#">Home</a></li>
-                  <li><a href="#">Current Issue</a></li>
-                  <li><a href="#">Date Schedule</a></li>
-                  <li><a href="#">Archives</a></li>
-                  <li><a href="#">Editorial Team</a></li>
-                  <li><a href="#">Publication Fee</a></li>
+                  <li class="menu-list"><a href="#">Home</a></li>
+                  <li class="menu-list"><a href="#">Current Issue</a></li>
+                  <li class="menu-list"><a href="#">Date Schedule</a></li>
+                  <li class="menu-list"><a href="#">Archives</a></li>
+                  <li class="menu-list"><a href="#">Editorial Team</a></li>
+                  <li class="menu-list"><a href="#">Publication Fee</a></li>
                 </ul>
                 <% } %>
           </div>
         </nav>
         <% if (!isJournalPage && !isArticlePage && sections && sections.NEWS && sections.NEWS.content) { %>
-          <div class="news-ticker">
-            <!-- <div id="news-scrolling"> </div> -->
-            <!-- <p id="news-scrolling">News Scrolling: Stay updated with the latest announcements and updates from EPRA
-      Trust Publishing!</p> -->
+          <!-- <div class="news-ticker">
             <p id="news-scrolling">
-              <%= sections.NEWS.content %>
+
             </p>
+          </div> -->
+          <div class="news-ticker">
+            <span class="news-tag">News</span>
+            <marquee onmouseover="this.stop()" onmouseout="this.start()">
+              <div id="news-scrolling"> 
+                <%= sections.NEWS.content %>  
+              </div>
+            </marquee>
+          
           </div>
           <% } %>
 </header>
+
+
+
 
 <script>
   const hamburger = document.querySelector('.hamburger');

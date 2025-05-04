@@ -8,6 +8,7 @@ const ContactService = require('../services/web/contactUs.service');
 const JournalService = require('../services/web/journal.service');
 const PaperService = require('../services/web/paper.service');
 const PageService = require('../services/web/page.service');
+const CertificateService = require('../services/web/certificate.service');
 
 const PaperController = require('../controllers/web/paper.controller');
 const CertificateController = require('../controllers/web/certificate.controller');
@@ -163,6 +164,7 @@ router.get('/journal/:journalCode/archives/:period', async (req, res) => {
   }
 });
 
+
 // Article View Page rendering route
 router.get('/article/:articleId', async (req, res) => {
   const { articleId } = req.params;
@@ -170,7 +172,11 @@ router.get('/article/:articleId', async (req, res) => {
     var pageData = await PageService.getPageData('demo'); // We should prepare a page for article view from articles
     const publicationTime = await PublicationService.getNextPublicationTime();
     const articleDetails = await JournalService.getOneArticleById(articleId);
+    const articleViewCountIncreament = await PaperService.incrementCount(articleId, 'view');
+
+    console.log('articleViewCountIncreament', articleViewCountIncreament);
     console.log('pageData', articleDetails);
+
     if (pageData ) {
       res.render('commonPage', { page: pageData, article: articleDetails[0], publicationTime, isJournalPage: false, isArticlePage: true });
     } else {
@@ -181,6 +187,45 @@ router.get('/article/:articleId', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+router.get('/article/:articleId/abstract', async (req, res) => {
+  const { articleId } = req.params;
+  try {
+
+    const articleDetails = await JournalService.getOneArticleById(articleId);
+    const articleViewCountIncreament = await PaperService.incrementCount(articleId, 'download');
+
+    console.log('articleViewCountIncreament', articleViewCountIncreament);
+
+    if (articleDetails ) {
+      res.render('articlePdf', {  article: articleDetails[0] });
+    } else {
+      res.status(404).send('Article not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.get('/certificate/:certificateId', async (req, res) => {
+  try {
+    const  { stream, fileName } = await CertificateService.generateCertificateImage(req.query.certificateId);
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Type', 'image/jpeg');
+    stream.pipe(res);
+    // console.log('certificate', certificate);
+    // if (certificate) {
+    //   res.json(certificate);
+    // } else {
+    //   res.json({ message: 'No Articles available' });
+    // }
+  } catch (error) {
+    console.error('Error In Generate Certificate', error);
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+});
+
 
 // API Routes
 router.get('/nextPublicationTime', async (req, res) => {
@@ -348,6 +393,7 @@ router.get('/articles/latest', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 
 

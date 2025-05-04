@@ -76,6 +76,7 @@ class PaperService {
                 SELECT 
                     a.id AS article_id, 
                     a.doc_url AS article_url, 
+                    a.authors_all,
                     p.paper_index, 
                     p.paper_title
                 FROM article a
@@ -167,7 +168,7 @@ class PaperService {
                 author.designation,
                 author.department,
                 author.college,
-                author.city,
+                // author.city,
                 author.country,
                 author.state,
                 paperId,
@@ -177,8 +178,8 @@ class PaperService {
             console.log(authorRecords);
             // Insert Authors
             await sequelize.query(
-                `INSERT INTO author (author_name, mobile, email, designation, dept, college_university, city, country, state, paper_id, is_main_author, created_at, updated_at)
-                 VALUES ${authorRecords.map(() => "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NOW(), NOW())").join(", ")}`,
+                `INSERT INTO author (author_name, mobile, email, designation, dept, college_university, country, state, paper_id, is_main_author, created_at, updated_at)
+                 VALUES ${authorRecords.map(() => "(?, ?, ?, ?, ?, ?, ?, ?, ?, false, NOW(), NOW())").join(", ")}`,
                 {
                     replacements: authorRecords.flat(),
                     type: sequelize.QueryTypes.INSERT,
