@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const passport = require('passport');
-
 const JWT_TOKEN = process.env.SECRET;
+const { uploadFile, upload } = require('./s3.controller');
 
 /**
  * Function used to register new admin
@@ -425,7 +425,7 @@ const updateAdminDetail = async (req, res) => {
     else {
       res.status(400).json({
         success: false,
-        message: 'Failed to udpate.',
+        message: 'Failed to update.',
       });
     }
   }
@@ -433,9 +433,39 @@ const updateAdminDetail = async (req, res) => {
     res.status(400).json({
       success: false,
       error: error.message || error,
-      message: 'Failed to udpate.',
+      message: 'Failed to update.',
     });
   }
+}
+
+/**
+ * Function used to upload admin file
+ */
+const uploadAdminFile = async (req, res) => {
+  try {
+    const upload = await uploadFile(req, 'common'); //Upload File
+    if (upload?.key) {
+      res.status(200).json({
+        success: true,
+        result: upload.key
+      });
+    }
+    else {
+      res.status(400).json({
+        success: false,
+        message: 'Failed to upload image.',
+      });
+    }
+  }
+  catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message || error,
+      message: 'Failed to upload image.',
+    });
+  }
+
+
 }
 
 router.get('/register', getRegisterAdminDetail);
@@ -445,4 +475,5 @@ router.post('/signin', signIn);
 router.post('/forgotPassword', sendForgotPasswordMail);
 router.get('/token', passport.authenticate('jwt', { session: false }), getAdminBasedOnToken);
 router.put('/update/:id', passport.authenticate('jwt', { session: false }), updateAdminDetail);
+router.post('/uploadFile', passport.authenticate('jwt', { session: false }), upload.single("file"), uploadAdminFile);
 module.exports = router;
