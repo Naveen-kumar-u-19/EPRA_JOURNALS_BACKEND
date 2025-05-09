@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "start:local": "copy .env-local .env && npm run start",
+    "start:prod": "cp .env-prod .env && npm run start"
   },
   "repository": {
     "type": "git",

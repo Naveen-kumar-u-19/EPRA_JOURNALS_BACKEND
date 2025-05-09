@@ -28,8 +28,10 @@
 }
 
 .journal-cover {
-    width: 120px;
-    height: 150px;
+    width: 205px;
+    height: auto;
+    max-height: 300px;
+    max-width: 300px;
     object-fit: cover;
     border-radius: 10px;
     margin-right: 20px;
@@ -245,6 +247,15 @@
             <% } %>
         </div>
     </header>
+    <% if(journalData.top_img_url) {%>
+    <div style="text-align: center;">
+        <!-- <img src="https://eprajournals.com/wrapper/header/header_10204jpeg" alt="Journal Cover" style="max-height: 300px;"> -->
+       
+        <img src="<%= journalData.top_img_url %>" alt="<%= journalData.name %> Cover" style="max-height: 300px;">
+        <!-- <img src="" alt="Journal Cover" > -->
+    </div>
+    <% } %>
+
 
     <div class="articles-section">
         <h2 class="section-title">Current Issue Articles</h2>

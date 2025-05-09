@@ -171,6 +171,16 @@
 </style>
 
 <div class="right-section">
+    <% if(journalData.side_img_url) {%>
+
+    <div style="text-align: center;">
+    <!-- <img src="https://eprajournals.com/wrapper/sidewrapper/sidewrapper_10204jpeg"
+     alt="Journal Cover" class="journal-cover"> -->
+     <img src="<%= journalData.side_img_url %>"
+     alt="Journal Cover" class="journal-cover">
+    </div>
+    <% } %>
+
     <h2 class="section-title">Archives</h2>
     <!-- <div class="archive-visual">
         <img src="https://eprajournals.com/wrapper/sidewrapper/sidewrapper_10204jpeg" alt="Archive Icon" class="archive-icon">

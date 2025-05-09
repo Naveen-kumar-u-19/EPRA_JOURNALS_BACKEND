@@ -117,17 +117,40 @@ class PaperService {
     
         return { success: true, message: `${type} count updated successfully.` };
     }
-    generatePaperIndex() {
-        return '123'
+   
+    static async generatePaperIndex(journalId) {
+        const now = new Date();
+        const year = now.getFullYear();                     // e.g., 2025
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // e.g., "05"
+        var [journalResult] = await sequelize.query(
+            `SELECT short_code FROM journal WHERE id = :journalId;`,
+            {
+                type: sequelize.QueryTypes.SELECT,
+                replacements: { journalId }
+            }
+        );
+        console.log('journalResult', journalResult);
+        journalResult = journalResult || { short_code: '01' }; // Default to 'XX' if not found
+        const journalNo = String(journalResult.short_code).padStart(2, '0');
+        var [submissionResult] = await sequelize.query(
+            `SELECT IFNULL(MAX(id), 0) + 1 AS nextId FROM paper;`,
+            { type: sequelize.QueryTypes.SELECT }
+        );
+        submissionResult = submissionResult || { nextId: 9999 }; // Default to 1 if no submissions exist
+        const submissionNo = String(submissionResult.nextId).padStart(6, '0');
+        const paperIndex = `${year}${month}-${journalNo}-${submissionNo}`;
+    
+        return paperIndex;
     }
+    
     static async submitPaper(req, res) {
         const t = await sequelize.transaction(); // Start transaction
 
         try {
             // const uploadDetail = await uploadFile(req); //Upload Doc
-            console.log('req.body.data', req.body.data);
+            // console.log('req.body.data', req.body.data);
             const { paperTitle, journalId,  authors } = JSON.parse(req.body.data); // need to add file and authors
-            // const file = req.file; // File from multer
+            const file = req.file; // File from multer
             console.log(paperTitle, journalId , authors, authors?.length === 0 )
             if (!paperTitle || !journalId  || !authors || authors?.length === 0 ) { // need to add file || authors || authors.length === 0
                 // return res.status(400).json({ success: false, message: "All fields and a file are required." });
@@ -136,21 +159,21 @@ class PaperService {
             }
     
             // Upload file to AWS S3
-            // const fileUrl = await uploadFileToS3(file, 'papers');
-            const fileUrl = 'doc';
-            console.log('req.file', req.file);
+            const fileUrl = await uploadFile(req, 'papers');
+            // const fileUrl = 'doc';
+            // console.log('req.file', fileUrl.key);
     
-         
-    
+            const paperIndex = await this.generatePaperIndex(journalId)
+            // console.log('paperIndex', paperIndex);
             // Insert Paper
             const [paperResult] = await sequelize.query(
                 `INSERT INTO paper (paper_index, paper_title, file_url, status, local_ip, journal_id, created_at, updated_at) 
                  VALUES (:paperIndex, :paperTitle, :fileUrl, 'PER', NULL, :journalId, NOW(), NOW())`,
                 {
                     replacements: {
-                        paperIndex: '123',
+                        paperIndex,
                         paperTitle,
-                        fileUrl,
+                        fileUrl: fileUrl.Key,
                         journalId
                     },
                     type: sequelize.QueryTypes.INSERT,

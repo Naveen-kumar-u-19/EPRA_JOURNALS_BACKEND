@@ -12,17 +12,17 @@ const CertificateService = require('../services/web/certificate.service');
 
 const PaperController = require('../controllers/web/paper.controller');
 const CertificateController = require('../controllers/web/certificate.controller');
-// const { upload, uploadToLocal } = require('../controllers/s3.controller');
-const multer = require('multer');
-// const upload = multer({ dest: 'assets/uploads' });
-const storage = multer.diskStorage({
-  destination: 'assets/uploads/',
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // e.g., 1623456789012-myfile.pdf
-  }
-});
+const { upload } = require('../controllers/s3.controller');
+// const multer = require('multer');
+// // const upload = multer({ dest: 'assets/uploads' });
+// const storage = multer.diskStorage({
+//   destination: 'assets/uploads/',
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + '-' + file.originalname); // e.g., 1623456789012-myfile.pdf
+//   }
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 const { getPageData } = require('../services/web/page.service');
 const sanitizeHtml = require('sanitize-html');
@@ -47,13 +47,13 @@ router.get('/pages/:PageCode', async (req, res) => {
     publicationTime = await PublicationService.getNextPublicationTime();
     sections = await SectionService.getThreeSections();
     const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
-    const safeHtml = sanitizeHtml(sections.LATEST_NEWS.content, {
-      allowedTags: ['p', 'b', 'i', 'em', 'strong', 'ul', 'ol', 'li', 'br', 'a'],
-      allowedAttributes: {
-        'a': ['href', 'target'],
-      },
-      allowedSchemes: ['http', 'https', 'mailto'],
-    });
+    // const safeHtml = sanitizeHtml(sections.LATEST_NEWS.content, {
+    //   allowedTags: ['p', 'b', 'i', 'em', 'strong', 'ul', 'ol', 'li', 'br', 'a'],
+    //   allowedAttributes: {
+    //     'a': ['href', 'target'],
+    //   },
+    //   allowedSchemes: ['http', 'https', 'mailto'],
+    // });
     // pageData.content =  sanitizeHtml(pageData.content, {
     //   allowedTags: [ 'p', 'b', 'i', 'em', 'strong', 'ul', 'ol', 'li', 'br', 'a' ],
     //   allowedAttributes: {
@@ -61,10 +61,10 @@ router.get('/pages/:PageCode', async (req, res) => {
     //   },
     //   allowedSchemes: ['http', 'https', 'mailto'],
     // });
-    console.log('pageData', pageData, publicationTime, sections, latestFeedbacks, safeHtml);
+    // console.log('pageData', pageData, publicationTime, sections, latestFeedbacks);
     // if (pageData) {
       res.render('commonPage', { page: pageData, publicationTime, sections, latestFeedbacks, 
-        safeHtml, isJournalPage: false, isArticlePage: false });
+         isJournalPage: false, isArticlePage: false });
     // } else {
       // res.status(404).send('Page not found');
       // res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections } )
