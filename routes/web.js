@@ -9,10 +9,14 @@ const JournalService = require('../services/web/journal.service');
 const PaperService = require('../services/web/paper.service');
 const PageService = require('../services/web/page.service');
 const CertificateService = require('../services/web/certificate.service');
+const NodeCache = require('node-cache');
+const cache = new NodeCache();
 
 const PaperController = require('../controllers/web/paper.controller');
 const CertificateController = require('../controllers/web/certificate.controller');
 const { upload } = require('../controllers/s3.controller');
+
+
 // const multer = require('multer');
 // // const upload = multer({ dest: 'assets/uploads' });
 // const storage = multer.diskStorage({
@@ -33,6 +37,11 @@ router.get('', (req, res) => {
 
 router.get('/web', (req, res) => {
   res.send('Web 123');
+});
+
+router.get('/clearCache', (req, res) => {
+  cache.flushAll();
+  res.status(200).send('Cache cleared');
 });
 
 
@@ -63,16 +72,18 @@ router.get('/pages/:PageCode', async (req, res) => {
     // });
     // console.log('pageData', pageData, publicationTime, sections, latestFeedbacks);
     // if (pageData) {
-      res.render('commonPage', { page: pageData, publicationTime, sections, latestFeedbacks, 
-         isJournalPage: false, isArticlePage: false });
+    res.render('commonPage', {
+      page: pageData, publicationTime, sections, latestFeedbacks,
+      isJournalPage: false, isArticlePage: false
+    });
     // } else {
-      // res.status(404).send('Page not found');
-      // res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections } )
+    // res.status(404).send('Page not found');
+    // res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections } )
     // }
   } catch (error) {
     console.error(error);
     // res.status(500).send('Internal Server Error');
-    res.render('pageNotFound', { publicationTime,  isJournalPage: false, isArticlePage: false, sections  } )
+    res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections })
 
   }
 });
@@ -119,22 +130,24 @@ router.get('/journal/:journalCode', async (req, res) => {
 
     console.log(journalId, articlesArchives, journalData, currentIssueId, articlesList);
     if (pageData) {
-      res.render('commonPage', { page: pageData, publicationTime, journalData: journalData[0] , articles: articlesList,
-         archives: articlesArchives, isJournalPage: true, isArticlePage: false });
+      res.render('commonPage', {
+        page: pageData, publicationTime, journalData: journalData[0], articles: articlesList,
+        archives: articlesArchives, isJournalPage: true, isArticlePage: false
+      });
     } else {
       res.status(404).send('Page not found');
     }
   } catch (error) {
     console.error(error);
     // res.status(500).send('Internal Server Error');
-    res.render('pageNotFound', { publicationTime,  isJournalPage: false, isArticlePage: false, sections  } )
+    res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections })
   }
 });
 
 router.get('/journal/:journalCode/archives/:period', async (req, res) => {
   const { journalCode, period } = req.params;
   try {
-    if(journalCode && period){
+    if (journalCode && period) {
       const pageData = await PageService.getPageData(journalCode);
       const [year, month] = period.split('-');
       const publicationTime = await PublicationService.getNextPublicationTime();
@@ -143,21 +156,23 @@ router.get('/journal/:journalCode/archives/:period', async (req, res) => {
       const journalData = await JournalService.getJournalWithLatestIssue(journalId);
       const currentIssueId = await JournalService.getCurrentIssueIdWithYearAndMonth(year, month);
       const articlesList = await JournalService.getArticlesList(currentIssueId);
-  
+
       // const sections = await SectionService.getThreeSections();
       // const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
       // console.log('pageData', pageData, publicationTime, sections, latestFeedbacks, safeHtml);
       console.log(journalId, articlesArchives, journalData, currentIssueId, articlesList);
       if (pageData) {
-        res.render('commonPage', { page: pageData, publicationTime, journalData: journalData[0] , articles: articlesList,
-           archives: articlesArchives, isJournalPage: true, isArticlePage: false });
+        res.render('commonPage', {
+          page: pageData, publicationTime, journalData: journalData[0], articles: articlesList,
+          archives: articlesArchives, isJournalPage: true, isArticlePage: false
+        });
       } else {
         res.status(404).send('Page not found');
       }
     } else {
       res.status(400).send('Invalid journal code or period');
     }
-   
+
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -177,7 +192,7 @@ router.get('/article/:articleId', async (req, res) => {
     console.log('articleViewCountIncreament', articleViewCountIncreament);
     console.log('pageData', articleDetails);
 
-    if (pageData ) {
+    if (pageData) {
       res.render('commonPage', { page: pageData, article: articleDetails[0], publicationTime, isJournalPage: false, isArticlePage: true });
     } else {
       res.status(404).send('Page not found');
@@ -197,8 +212,8 @@ router.get('/article/:articleId/abstract', async (req, res) => {
 
     console.log('articleViewCountIncreament', articleViewCountIncreament);
 
-    if (articleDetails ) {
-      res.render('articlePdf', {  article: articleDetails[0] });
+    if (articleDetails) {
+      res.render('articlePdf', { article: articleDetails[0] });
     } else {
       res.status(404).send('Article not found');
     }
@@ -210,7 +225,7 @@ router.get('/article/:articleId/abstract', async (req, res) => {
 
 router.get('/certificate/:certificateId', async (req, res) => {
   try {
-    const  { stream, fileName } = await CertificateService.generateCertificateImage(req.query.certificateId);
+    const { stream, fileName } = await CertificateService.generateCertificateImage(req.query.certificateId);
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Type', 'image/jpeg');
     stream.pipe(res);
