@@ -10,7 +10,9 @@ const SectionController = require('../controllers/section.controller');
 const NextPublicationController = require('../controllers/nextPublication.controller');
 const IndexingController = require('../controllers/indexing.controller');
 const AuthorController = require('../controllers/author.controller');
+const FeedbackController = require('../controllers/feedback.controller');
 const passport = require('passport');
+
 
 router.use('/journal', passport.authenticate('jwt', { session: false }), JournalController); //For Journal related API's
 router.use('/paper', passport.authenticate('jwt', { session: false }), PaperController); //For Paper related API's
@@ -21,6 +23,7 @@ router.use('/section', passport.authenticate('jwt', { session: false }), Section
 router.use('/next-publication', passport.authenticate('jwt', { session: false }), NextPublicationController); //For Next publication
 router.use('/indexing', passport.authenticate('jwt', { session: false }), IndexingController); //For Indexing
 router.use('/author', passport.authenticate('jwt', { session: false }), AuthorController); //For Author
+router.use('/feedback', passport.authenticate('jwt', { session: false }), FeedbackController);//For Feedback 
 router.use('/adminAuth', AdminAuthController); //For Admin auth API's
 
 module.exports = router;
