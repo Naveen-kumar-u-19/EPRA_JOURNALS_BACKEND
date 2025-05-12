@@ -1,8 +1,9 @@
-const NodeCache = require('node-cache');
 const Feedback = require('../../models/feedback');
 const { sequelize } = require('../../models');
 
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 600 }); // Cache for 5 mins
+// const NodeCache = require('node-cache');
+// const cache = new NodeCache({ stdTTL: 300, checkperiod: 600 }); // Cache for 5 mins
+const cache = require('../../cache');
 
 class FeedbackService {
     // Fetch last 10 approved feedbacks (cached)
@@ -12,10 +13,10 @@ class FeedbackService {
         let feedbacks;
         // if (!feedbacks) {
             const records = await sequelize.query(
-                `SELECT fullName, email, feedback 
+                `SELECT full_name, email, feedback 
                  FROM feedback 
-                 WHERE status = :status AND isDeleted = :isDeleted
-                 ORDER BY createdAt DESC 
+                 WHERE status = :status AND is_deleted = :isDeleted
+                 ORDER BY created_at DESC 
                  LIMIT 10;`, 
                 { 
                     type: sequelize.QueryTypes.SELECT,
@@ -36,7 +37,7 @@ class FeedbackService {
     // Submit new feedback
     static async submitFeedback(fullName, email, feedback) {
         const [result] = await sequelize.query(
-            `INSERT INTO feedback (fullName, email, feedback, status, createdAt, updatedAt) 
+            `INSERT INTO feedback (full_name, email, feedback, status, created_at, updated_at) 
              VALUES (:fullName, :email, :feedback, 'PENDING', NOW(), NOW());`,
             { 
                 type: sequelize.QueryTypes.INSERT,
@@ -55,7 +56,7 @@ class FeedbackService {
         const [{total}] = await sequelize.query(
             `SELECT COUNT(*) as total 
              FROM feedback 
-             WHERE isDeleted = false;`,
+             WHERE is_deleted = false;`,
             { type: sequelize.QueryTypes.SELECT }
         );
         console.log(total);
@@ -63,7 +64,7 @@ class FeedbackService {
         const feedbacks = await sequelize.query(
             `SELECT * 
              FROM feedback 
-             WHERE isDeleted = false 
+             WHERE is_deleted = false 
              ORDER BY createdAt DESC 
              LIMIT :pageSize OFFSET :offset;`,
             { 

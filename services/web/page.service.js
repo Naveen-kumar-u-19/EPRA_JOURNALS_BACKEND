@@ -3,7 +3,7 @@ const { sequelize } = require('../../models');
 async function getPageData(PageCode) {
     try {
       const [result] = await sequelize.query(
-        'SELECT * FROM page WHERE PageCode = :pageCode',
+        'SELECT * FROM page WHERE page_code = :pageCode',
         {
           replacements: { pageCode: PageCode },
           type: sequelize.QueryTypes.SELECT, // Specify query type

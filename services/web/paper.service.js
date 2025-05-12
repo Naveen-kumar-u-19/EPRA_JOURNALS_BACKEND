@@ -2,8 +2,9 @@
 const { sequelize } = require('../../models');
 const { uploadFile, upload } = require('../../controllers/s3.controller');
 
-const NodeCache = require('node-cache');
-const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // Cache for 1 hour
+// const NodeCache = require('node-cache');
+// const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // Cache for 1 hour
+const cache = require('../../cache');
 
 class PaperService {
     static async getPaperStatus(paperIndex) {
@@ -150,7 +151,8 @@ class PaperService {
             // const uploadDetail = await uploadFile(req); //Upload Doc
             // console.log('req.body.data', req.body.data);
             const { paperTitle, journalId,  authors } = JSON.parse(req.body.data); // need to add file and authors
-            const file = req.file; // File from multer
+            // const file = req.file; // File from multer
+            const systemIp = req.ip ||  req.headers['x-forwarded-for'] || '127.0.0.1';
             console.log(paperTitle, journalId , authors, authors?.length === 0 )
             if (!paperTitle || !journalId  || !authors || authors?.length === 0 ) { // need to add file || authors || authors.length === 0
                 // return res.status(400).json({ success: false, message: "All fields and a file are required." });
@@ -168,7 +170,7 @@ class PaperService {
             // Insert Paper
             const [paperResult] = await sequelize.query(
                 `INSERT INTO paper (paper_index, paper_title, file_url, status, local_ip, journal_id, created_at, updated_at) 
-                 VALUES (:paperIndex, :paperTitle, :fileUrl, 'PER', NULL, :journalId, NOW(), NOW())`,
+                 VALUES (:paperIndex, :paperTitle, :fileUrl, 'PER', :systemIp, :journalId, NOW(), NOW())`,
                 {
                     replacements: {
                         paperIndex,

@@ -1,8 +1,9 @@
 const { sequelize } = require('../../models');
 
-const NodeCache = require('node-cache');
+// const NodeCache = require('node-cache');
 
-const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // Cache for 1 hour
+// const cache = new NodeCache({ stdTTL: 3600, checkperiod: 600 }); // Cache for 1 hour
+const cache = require('../../cache'); // Assuming you have a cache module
 
 class JournalService {
     // Fetch all journals (full version)

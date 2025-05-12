@@ -1,10 +1,11 @@
-const NodeCache = require('node-cache');
 const PublicationSchedule = require('../../models/publicationSchedule');
 const PublicationScheduleLogs = require('../../models/publicationScheduleLog');
 const { sequelize } = require('../../models');
 
-const cache = new NodeCache({ stdTTL: 43200, checkperiod: 120 });
+// const NodeCache = require('node-cache');
+// const cache = new NodeCache({ stdTTL: 43200, checkperiod: 120 });
 
+const cache = require('../../cache');
 class PublicationService {
     static async getNextPublicationTime() {
         const cacheKey = 'next_publication_time';

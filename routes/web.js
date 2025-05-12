@@ -9,8 +9,13 @@ const JournalService = require('../services/web/journal.service');
 const PaperService = require('../services/web/paper.service');
 const PageService = require('../services/web/page.service');
 const CertificateService = require('../services/web/certificate.service');
-const NodeCache = require('node-cache');
-const cache = new NodeCache();
+const indexingService = require('../services/web/indexing.service');
+const commonService = require('../services/common.service');
+
+// const NodeCache = require('node-cache');
+// const cache = new NodeCache();
+const cache = require('../cache');
+
 
 const PaperController = require('../controllers/web/paper.controller');
 const CertificateController = require('../controllers/web/certificate.controller');
@@ -32,17 +37,13 @@ const { getPageData } = require('../services/web/page.service');
 const sanitizeHtml = require('sanitize-html');
 
 router.get('', (req, res) => {
-  res.send('Welcome 123');
+  res.send('EPRA Journals - v1.0 - Launching Soon');
 });
 
 router.get('/web', (req, res) => {
-  res.send('Web 123');
+  res.send('Server is running - Health Check');
 });
 
-router.get('/clearCache', (req, res) => {
-  cache.flushAll();
-  res.status(200).send('Cache cleared');
-});
 
 
 // Page rendering Routes
@@ -56,6 +57,7 @@ router.get('/pages/:PageCode', async (req, res) => {
     publicationTime = await PublicationService.getNextPublicationTime();
     sections = await SectionService.getThreeSections();
     const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
+    console.log('pageData', pageData);
     // const safeHtml = sanitizeHtml(sections.LATEST_NEWS.content, {
     //   allowedTags: ['p', 'b', 'i', 'em', 'strong', 'ul', 'ol', 'li', 'br', 'a'],
     //   allowedAttributes: {
@@ -74,7 +76,7 @@ router.get('/pages/:PageCode', async (req, res) => {
     // if (pageData) {
     res.render('commonPage', {
       page: pageData, publicationTime, sections, latestFeedbacks,
-      isJournalPage: false, isArticlePage: false
+      isJournalPage: false, isArticlePage: false, isJournalWisePage: false
     });
     // } else {
     // res.status(404).send('Page not found');
@@ -131,8 +133,8 @@ router.get('/journal/:journalCode', async (req, res) => {
     console.log(journalId, articlesArchives, journalData, currentIssueId, articlesList);
     if (pageData) {
       res.render('commonPage', {
-        page: pageData, publicationTime, journalData: journalData[0], articles: articlesList,
-        archives: articlesArchives, isJournalPage: true, isArticlePage: false
+        page: pageData, publicationTime, journalData: journalData[0], articles: articlesList, journalCode,
+        archives: articlesArchives, isJournalPage: true, isArticlePage: false, isJournalWisePage: false
       });
     } else {
       res.status(404).send('Page not found');
@@ -163,8 +165,8 @@ router.get('/journal/:journalCode/archives/:period', async (req, res) => {
       console.log(journalId, articlesArchives, journalData, currentIssueId, articlesList);
       if (pageData) {
         res.render('commonPage', {
-          page: pageData, publicationTime, journalData: journalData[0], articles: articlesList,
-          archives: articlesArchives, isJournalPage: true, isArticlePage: false
+          page: pageData, publicationTime, journalData: journalData[0], articles: articlesList, journalCode,
+          archives: articlesArchives, isJournalPage: true, isArticlePage: false, isJournalWisePage: false
         });
       } else {
         res.status(404).send('Page not found');
@@ -178,6 +180,69 @@ router.get('/journal/:journalCode/archives/:period', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+// Page to render Journal Archives in a Full page
+router.get('/journal/:journalCode/archives', async (req, res) => {
+  const { journalCode } = req.params;
+  let publicationTime = null;
+  let sections = null;
+  try {
+    var pageData = await PageService.getPageData(journalCode);
+    publicationTime = await PublicationService.getNextPublicationTime();
+    sections = await SectionService.getThreeSections();
+    const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
+    const journalId = await JournalService.getJournalIdByCode(journalCode);
+    const articlesArchives = await JournalService.getArtilcesArchives(journalId);
+    console.log('articlesArchives', articlesArchives);
+    console.log('pageData', pageData);
+    // if (pageData) {
+    res.render('commonPage', {
+      page: pageData, publicationTime, sections, latestFeedbacks, journalCode, 
+      isJournalPage: true, isArticlePage: false, isJournalWisePage: false,
+      allArchives: articlesArchives, isFullpageArchive: true
+    });
+    // } else {
+    // res.status(404).send('Page not found');
+    // res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections } )
+    // }
+  } catch (error) {
+    console.error(error);
+    // res.status(500).send('Internal Server Error');
+    res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections })
+
+  }
+});
+
+// Page for Journal Wise Page - Menu From Journal Home Page
+router.get('/journal/:journalCode/:PageCode', async (req, res) => {
+  const { journalCode, PageCode } = req.params;
+  const pageId = `${journalCode}_${PageCode.toUpperCase()}`;
+  console.log('pageId', pageId);
+  let publicationTime = null;
+  let sections = null;
+  try {
+    var pageData = await PageService.getPageData(pageId);
+    publicationTime = await PublicationService.getNextPublicationTime();
+    sections = await SectionService.getThreeSections();
+    const latestFeedbacks = await FeedbackService.getLast10Feedbacks();
+    console.log('pageData', pageData);
+    // if (pageData) {
+    res.render('commonPage', {
+      page: pageData, publicationTime, sections, latestFeedbacks, journalCode, 
+      isJournalPage: true, isArticlePage: false, isJournalWisePage: true
+    });
+    // } else {
+    // res.status(404).send('Page not found');
+    // res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections } )
+    // }
+  } catch (error) {
+    console.error(error);
+    // res.status(500).send('Internal Server Error');
+    res.render('pageNotFound', { publicationTime, isJournalPage: false, isArticlePage: false, sections })
+
+  }
+});
+
 
 
 // Article View Page rendering route
@@ -193,7 +258,8 @@ router.get('/article/:articleId', async (req, res) => {
     console.log('pageData', articleDetails);
 
     if (pageData) {
-      res.render('commonPage', { page: pageData, article: articleDetails[0], publicationTime, isJournalPage: false, isArticlePage: true });
+      res.render('commonPage', { page: pageData, article: articleDetails[0], publicationTime,
+         isJournalPage: false, isArticlePage: true, isJournalWisePage: false });
     } else {
       res.status(404).send('Page not found');
     }
@@ -243,6 +309,15 @@ router.get('/certificate/:certificateId', async (req, res) => {
 
 
 // API Routes
+
+
+router.get('/clearCache', async (req, res) => {
+  cache.flushAll();
+  await commonService.clearCache();
+  res.status(200).send('Cache cleared');
+});
+
+
 router.get('/nextPublicationTime', async (req, res) => {
   try {
     const nextPublicationTime = await PublicationService.getNextPublicationTime();
@@ -406,6 +481,16 @@ router.get('/articles/latest', async (req, res) => {
   } catch (error) {
     console.error('Error fetching articles:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.get('/indexing', async (req, res) => {
+  try {
+    const indexing = await indexingService.getIndexing();
+    res.json({ success: true, data: indexing });
+  } catch (error) {
+    console.error('Error fetching journals:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error', error });
   }
 });
 

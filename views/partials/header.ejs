@@ -272,6 +272,9 @@
           <div class="logo">
             <!-- <img src="../../assets/images/epra_trust_logo.png" alt="EPRA Logo"> -->
             <img src="https://d3sakwxmd5onjg.cloudfront.net/images/epra_trust_logo.png" alt="EPRA Logo">
+           <% if(isJournalPage) { %>
+            journal heading
+            <% } %>
             
             <!-- <h1>[Logo] EPRA Trust <span>Publishing</span></h1> -->
           </div>
@@ -311,7 +314,7 @@
             <div class="header-submit-button">
               <br>
               <!-- <button href="./paperSubmission.html">Submit Your Paper</button> -->
-              <a href="./paperSubmission.html">
+              <a href="/paperSubmission">
                 Submit Your Paper
                 <i class="fa fa-external-link-alt"></i>
               </a>
@@ -324,7 +327,17 @@
             <div class="close-btn">✖</div>
             <% if (!isJournalPage && !isArticlePage ) { %>
               <ul>
-                <li class="menu-list"><a href="#">Home</a></li>
+                   <li class="menu-list"><a href="/">Home</a></li>
+                    <li class="menu-list"><a href="/pages/about-us">About Us</a></li>
+                    <li class="menu-list"><a href="/pages/info-centre">Info Centre</a></li>
+                    <li class="menu-list"><a href="/pages/publication-fee">Publication Fee</a></li>
+                    <li class="menu-list"><a href="/indexing">Indexing</a></li>
+                    <li class="menu-list"><a href="/pages/review-process">Review Process</a></li>
+                    <li class="menu-list"><a href="/feedbacks">Feedback</a></li>
+                    <li class="menu-list"><a href="#">E Payment</a></li>
+                    <li class="menu-list"><a href="/contact-us">Contact Us</a></li>
+
+                <!-- <li class="menu-list"><a href="#">Home</a></li>
                 <li class="menu-list"><a href="#">About Us</a></li>
                 <li class="menu-list"><a href="#">Editorial Board</a></li>
                 <li class="menu-list"><a href="#">Info Centre</a></li>
@@ -332,16 +345,17 @@
                 <li class="menu-list"><a href="#">Indexing</a></li>
                 <li class="menu-list"><a href="#">Review Process</a></li>
                 <li class="menu-list"><a href="#">Feedback</a></li>
-                <li class="menu-list"><a href="#">Contact Us</a></li>
+                <li class="menu-list"><a href="#">Contact Us</a></li> -->
               </ul>
               <% } else { %>
                 <ul>
-                  <li class="menu-list"><a href="#">Home</a></li>
-                  <li class="menu-list"><a href="#">Current Issue</a></li>
-                  <li class="menu-list"><a href="#">Date Schedule</a></li>
-                  <li class="menu-list"><a href="#">Archives</a></li>
-                  <li class="menu-list"><a href="#">Editorial Team</a></li>
-                  <li class="menu-list"><a href="#">Publication Fee</a></li>
+                  <li class="menu-list"><a href="/">Home</a></li>
+                  <li class="menu-list"><a href="/journal/<%=journalCode%>">Current Issue</a></li>
+                  <li class="menu-list"><a href="/journal/<%=journalCode%>/date-schedule">Date Schedule</a></li>
+                  <li class="menu-list"><a href="/journal/<%=journalCode%>/archives">Archives</a></li>
+                  <li class="menu-list"><a href="/journal/<%=journalCode%>/about">About</a></li>
+                  <li class="menu-list"><a href="/journal/<%=journalCode%>/editorial-team">Editorial Team</a></li>
+                  <li class="menu-list"><a href="/journal/<%=journalCode%>/publication-fee">Publication Fee</a></li>
                 </ul>
                 <% } %>
           </div>

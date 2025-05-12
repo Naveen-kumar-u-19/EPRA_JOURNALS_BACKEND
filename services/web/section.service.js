@@ -1,9 +1,10 @@
-const NodeCache = require('node-cache');
 const Section = require('../../models/section');
 const { sequelize } = require('../../models');
 
-const cache = new NodeCache({ stdTTL: 300, checkperiod: 600 }); // Cache expires in 5 mins
+// const NodeCache = require('node-cache');
+// const cache = new NodeCache({ stdTTL: 300, checkperiod: 600 }); // Cache expires in 5 mins
 
+const cache = require('../../cache'); // Assuming you have a cache module
 class SectionService {
     static async getSectionByCode(sectionCode) {
         const cacheKey = `section_${sectionCode}`;
