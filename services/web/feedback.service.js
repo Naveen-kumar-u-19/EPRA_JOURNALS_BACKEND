@@ -65,7 +65,7 @@ class FeedbackService {
             `SELECT * 
              FROM feedback 
              WHERE is_deleted = false 
-             ORDER BY createdAt DESC 
+             ORDER BY created_at DESC 
              LIMIT :pageSize OFFSET :offset;`,
             { 
                 type: sequelize.QueryTypes.SELECT,

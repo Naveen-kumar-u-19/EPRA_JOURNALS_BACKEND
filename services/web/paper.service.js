@@ -176,7 +176,8 @@ class PaperService {
                         paperIndex,
                         paperTitle,
                         fileUrl: fileUrl.Key,
-                        journalId
+                        journalId, 
+                        systemIp
                     },
                     type: sequelize.QueryTypes.INSERT,
                     transaction: t
