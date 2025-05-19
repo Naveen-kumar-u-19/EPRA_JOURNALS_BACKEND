@@ -76,7 +76,8 @@ router.get('/pages/:PageCode', async (req, res) => {
     // if (pageData) {
     res.render('commonPage', {
       page: pageData, publicationTime, sections, latestFeedbacks,
-      isJournalPage: false, isArticlePage: false, isJournalWisePage: false
+      isJournalPage: false, isArticlePage: false, isJournalWisePage: false,
+       isFullpageArchive: false
     });
     // } else {
     // res.status(404).send('Page not found');
@@ -134,7 +135,8 @@ router.get('/journal/:journalCode', async (req, res) => {
     if (pageData) {
       res.render('commonPage', {
         page: pageData, publicationTime, journalData: journalData[0], articles: articlesList, journalCode,
-        archives: articlesArchives, isJournalPage: true, isArticlePage: false, isJournalWisePage: false
+        archives: articlesArchives, isJournalPage: true, isArticlePage: false, isJournalWisePage: false,
+        isFullpageArchive: false
       });
     } else {
       res.status(404).send('Page not found');
@@ -166,7 +168,7 @@ router.get('/journal/:journalCode/archives/:period', async (req, res) => {
       if (pageData) {
         res.render('commonPage', {
           page: pageData, publicationTime, journalData: journalData[0], articles: articlesList, journalCode,
-          archives: articlesArchives, isJournalPage: true, isArticlePage: false, isJournalWisePage: false
+          archives: articlesArchives, isJournalPage: true, isArticlePage: false, isJournalWisePage: false, isFullpageArchive: false
         });
       } else {
         res.status(404).send('Page not found');
@@ -229,7 +231,7 @@ router.get('/journal/:journalCode/:PageCode', async (req, res) => {
     // if (pageData) {
     res.render('commonPage', {
       page: pageData, publicationTime, sections, latestFeedbacks, journalCode, 
-      isJournalPage: true, isArticlePage: false, isJournalWisePage: true
+      isJournalPage: true, isArticlePage: false, isJournalWisePage: true, isFullpageArchive: false
     });
     // } else {
     // res.status(404).send('Page not found');
@@ -259,7 +261,7 @@ router.get('/article/:articleId', async (req, res) => {
 
     if (pageData) {
       res.render('commonPage', { page: pageData, article: articleDetails[0], publicationTime,
-         isJournalPage: false, isArticlePage: true, isJournalWisePage: false });
+         isJournalPage: false, isArticlePage: true, isJournalWisePage: false, isFullpageArchive: false });
     } else {
       res.status(404).send('Page not found');
     }
