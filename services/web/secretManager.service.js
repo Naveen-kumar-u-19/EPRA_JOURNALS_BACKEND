@@ -1,6 +1,8 @@
 // secretService.js
 const AWS = require('aws-sdk');
 
+AWS.config.update({ region: 'ap-south-1' }); // Mumbai region
+
 const secretsManager = new AWS.SecretsManager(); // Use your region
 
 async function getEpraSecrets() {
