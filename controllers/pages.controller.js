@@ -53,8 +53,8 @@ const getAllPages = async (req, res) => {
 const createPage = async (req, res) => {
   try {
     const [createPage] = await sequelize.query(
-      `INSERT INTO page (page_code, page_title, meta_description, meta_keywords, content, header_scripts,footer_scripts,og_title,og_description, og_image, og_url,og_type) 
-      VALUES (:page_code, :page_title, :meta_description, :meta_keywords, :content, :header_scripts, :footer_scripts, :og_title, :og_description, :og_image, :og_url, :og_type)`,
+      `INSERT INTO page (page_code, page_title, meta_description, meta_keywords, content, header_scripts,footer_scripts,og_title,og_description) 
+      VALUES (:page_code, :page_title, :meta_description, :meta_keywords, :content, :header_scripts, :footer_scripts, :og_title, :og_description)`,
       {
         replacements: req.body,
         type: sequelize.QueryTypes.INSERT,
@@ -101,9 +101,6 @@ const updatePageDetail = async (req, res) => {
            footer_scripts = :footer_scripts,
            og_title = :og_title,
            og_description = :og_description,
-           og_image = :og_image,
-           og_url = :og_url,
-           og_type = :og_type,
            updated_at = :updatedAt
        WHERE id = :id and is_deleted = false`,
       {

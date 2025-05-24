@@ -43,6 +43,10 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(50),
       allowNull: false
     },
+    journalNo: {
+      type: DataTypes.NUMBER,
+      allowNull: true
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

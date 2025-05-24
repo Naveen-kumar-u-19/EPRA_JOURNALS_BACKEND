@@ -115,9 +115,8 @@ const updatePaperDetail = async (req, res) => {
   try {
     req.body['id'] = req.params?.id;
     req.body['updatedAt'] = new Date();
-    console.log('Body.....', req.body);
     const [updateJournal] = await sequelize.query(
-      'UPDATE `paper` SET `paper_title` =:paper_title,`local_ip`=:local_ip,`status`=:status where `id` =:id', {
+      'UPDATE `paper` SET `paper_title` =:paper_title,`status`=:status where `id` =:id', {
       replacements: req.body
     }
     )
